@@ -3,6 +3,7 @@ using UnityEngine;
 public class NoclipPlayerController : MonoBehaviour
 {
     private float _speed;
+
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
@@ -10,7 +11,9 @@ public class NoclipPlayerController : MonoBehaviour
     }
 
     private float xRotation = 0f;
+
     private float yRotation = 0f;
+
     // Update is called once per frame
     void Update()
     {
@@ -33,13 +36,12 @@ public class NoclipPlayerController : MonoBehaviour
         {
             this.transform.Translate(Vector3.left * Time.deltaTime * 10);
         }
-        
+
         if (Input.GetKey(KeyCode.D))
         {
             this.transform.Translate(Vector3.right * Time.deltaTime * 10);
         }
-        
-        
+
         if (Input.GetKey(KeyCode.S))
         {
             this.transform.Translate(Vector3.back * Time.deltaTime * 10);
@@ -49,7 +51,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             this.transform.Translate(Vector3.up * Time.deltaTime * 10);
         }
-        
+
         if (Input.GetKey(KeyCode.LeftControl))
         {
             this.transform.Translate(Vector3.down * Time.deltaTime * 10);
