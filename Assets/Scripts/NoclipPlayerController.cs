@@ -68,6 +68,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _isOnGround = true;
             _rb.linearDamping = 0.95f;
+            _rb.angularDamping = 0.95f;
             _rb.linearVelocity /= 10;
         }
     }
