@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class NoclipPlayerController : MonoBehaviour
@@ -10,7 +12,9 @@ public class NoclipPlayerController : MonoBehaviour
 
     private float _speed;
     private bool _isOnGround;
+    private bool _stationaryFlightActive = false;
     private bool _wingsActive = false;
+    private HashSet<Vector3> _staticFlightDirections = new HashSet<Vector3>();
 
     private Rigidbody _rb;
 
@@ -39,6 +43,19 @@ public class NoclipPlayerController : MonoBehaviour
         // 3. Apply vertical rotation directly to this camera
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
 
+        HandleInput();
+        if (_stationaryFlightActive)
+        {
+            foreach (var staticFlightDirection in _staticFlightDirections)
+            {
+                print(staticFlightDirection * Time.deltaTime * 10f);
+                transform.position += staticFlightDirection * Time.deltaTime * 5f;
+            }
+        }
+    }
+
+    private void HandleInput()
+    {
         if (Input.GetButtonDown("Jump"))
         {
             _wingsActive = true;
@@ -50,16 +67,57 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _wingsActive = false;
         }
+
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            _stationaryFlightActive = true;
+            _rb.constraints = RigidbodyConstraints.FreezePositionY;
+        }
+
+        if (Input.GetKeyUp(KeyCode.LeftShift))
+        {
+            _stationaryFlightActive = false;
+            _rb.constraints = RigidbodyConstraints.None;
+        }
+
+        if (Input.GetKey(KeyCode.W))
+        {
+            _staticFlightDirections.Add(transform.forward);
+        }
+
+        if (Input.GetKey(KeyCode.A))
+        {
+            _staticFlightDirections.Add(-transform.right);
+        }
+
+        if (Input.GetKey(KeyCode.S))
+        {
+            _staticFlightDirections.Add(-transform.forward);
+        }
+
+        if (Input.GetKey(KeyCode.D))
+        {
+            _staticFlightDirections.Add(transform.right);
+        }
+
+        if (_wingsActive)
+        {
+            _staticFlightDirections.Add(transform.up);
+        }
     }
 
     void FixedUpdate()
     {
         // print(_isOnGround ? "The bird is on ground" : "The bird is not on ground");
-        if (_wingsActive)
+        if (_wingsActive && !_stationaryFlightActive)
         {
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
             _rb.AddForce(Vector3.up * (upBias * wingForce * Time.deltaTime), ForceMode.Force);
+        } else if (_stationaryFlightActive)
+        {
+            _rb.linearDamping = 0.95f;
         }
+        _staticFlightDirections.Clear();
     }
 
     void OnCollisionEnter(Collision collision)
