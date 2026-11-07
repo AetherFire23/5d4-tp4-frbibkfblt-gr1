@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
@@ -37,21 +38,14 @@ public class NoclipPlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * 5;
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         // 2. Calculate vertical camera rotation (Look Up/Down)
-        xRotation -= mouseX;
+        print(Mathf.Lerp(mouseX, 0, Vector3.Dot(_rb.linearVelocity, transform.forward)) * 0.02f);
+        xRotation -= Mathf.Lerp(mouseX, 0, Vector3.Dot(_rb.linearVelocity, transform.forward) * 0.02f);
         yRotation -= mouseY;
 
         // 3. Apply vertical rotation directly to this camera
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
 
         HandleInput();
-        if (_stationaryFlightActive)
-        {
-            foreach (var staticFlightDirection in _staticFlightDirections)
-            {
-                print(staticFlightDirection * Time.deltaTime * 10f);
-                transform.position += staticFlightDirection * Time.deltaTime * 5f;
-            }
-        }
     }
 
     private void HandleInput()
@@ -111,12 +105,20 @@ public class NoclipPlayerController : MonoBehaviour
         // print(_isOnGround ? "The bird is on ground" : "The bird is not on ground");
         if (_wingsActive && !_stationaryFlightActive)
         {
+            _rb.linearDamping = 0.05f;
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
             _rb.AddForce(Vector3.up * (upBias * wingForce * Time.deltaTime), ForceMode.Force);
-        } else if (_stationaryFlightActive)
+        }
+        else if (_stationaryFlightActive)
         {
+            foreach (var staticFlightDirection in _staticFlightDirections)
+            {
+                _rb.AddForce(staticFlightDirection * Time.deltaTime * wingForce /2, ForceMode.Force);
+            }
+
             _rb.linearDamping = 0.95f;
         }
+
         _staticFlightDirections.Clear();
     }
 
