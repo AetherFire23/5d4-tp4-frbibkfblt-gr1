@@ -6,16 +6,17 @@ using UnityEngine;
 public class NoclipPlayerController : MonoBehaviour
 {
     public float maxForwardSpeed = 100f;
-    public float maxUpSpeed = 100f;
     public float wingForce = 10f;
     public float upBias = 0.5f;
     public float forwardBias = 1f;
+    public float torque = 10000f;
 
     private float _speed;
     private bool _isOnGround;
     private bool _stationaryFlightActive = false;
     private bool _wingsActive = false;
     private HashSet<Vector3> _staticFlightDirections = new HashSet<Vector3>();
+    private Vector3 _previousRotation = Vector3.zero;
 
     private Rigidbody _rb;
 
@@ -34,13 +35,14 @@ public class NoclipPlayerController : MonoBehaviour
     void Update()
     {
         _rb.maxLinearVelocity = maxForwardSpeed;
+        _rb.maxAngularVelocity = maxForwardSpeed;
         // 1. Get Mouse input multiplied by sensitivity
         float mouseX = Input.GetAxis("Mouse X") * 5;
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         // 2. Calculate vertical camera rotation (Look Up/Down)
-        print(Mathf.Lerp(mouseX, 0, Vector3.Dot(_rb.linearVelocity, transform.forward)) * 0.02f);
-        xRotation -= Mathf.Lerp(mouseX, 0, Vector3.Dot(_rb.linearVelocity, transform.forward) * 0.02f);
+        xRotation -= Mathf.Lerp(mouseX, 0, _rb.linearVelocity.z * 0.025f);
         yRotation -= mouseY;
+
 
         // 3. Apply vertical rotation directly to this camera
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
@@ -65,13 +67,15 @@ public class NoclipPlayerController : MonoBehaviour
         if (Input.GetKeyDown(KeyCode.LeftShift))
         {
             _stationaryFlightActive = true;
-            _rb.constraints = RigidbodyConstraints.FreezePositionY;
+            _rb.useGravity = false;
+            // _rb.constraints = RigidbodyConstraints.Free;
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             _stationaryFlightActive = false;
-            _rb.constraints = RigidbodyConstraints.None;
+            _rb.useGravity = true;
+            // _rb.constraints = RigidbodyConstraints.None;
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -102,7 +106,6 @@ public class NoclipPlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        // print(_isOnGround ? "The bird is on ground" : "The bird is not on ground");
         if (_wingsActive && !_stationaryFlightActive)
         {
             _rb.linearDamping = 0.05f;
@@ -113,12 +116,20 @@ public class NoclipPlayerController : MonoBehaviour
         {
             foreach (var staticFlightDirection in _staticFlightDirections)
             {
-                _rb.AddForce(staticFlightDirection * Time.deltaTime * wingForce /2, ForceMode.Force);
+                _rb.AddForce(staticFlightDirection * Time.deltaTime * wingForce / 2, ForceMode.Force);
             }
 
             _rb.linearDamping = 0.95f;
         }
 
+        if (!_isOnGround)
+        {
+            Vector3 rotationDiff = transform.localRotation.eulerAngles - _previousRotation;
+            print((rotationDiff * (torque * Time.deltaTime)));
+            _rb.AddForce(new Vector3(-Math.Abs(Mathf.Lerp(0, 1, rotationDiff.y)), 0 ,0) * (torque * Time.deltaTime), ForceMode.Impulse);
+        }
+
+        _previousRotation = transform.localRotation.eulerAngles;
         _staticFlightDirections.Clear();
     }
 
@@ -128,7 +139,6 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _isOnGround = true;
             _rb.linearDamping = 0.95f;
-            _rb.angularDamping = 0.95f;
             _rb.linearVelocity /= 10;
         }
     }
