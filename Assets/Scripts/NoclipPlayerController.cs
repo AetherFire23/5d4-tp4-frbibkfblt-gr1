@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.VisualScripting;
 using UnityEngine;
 
 public class NoclipPlayerController : MonoBehaviour
@@ -10,6 +11,7 @@ public class NoclipPlayerController : MonoBehaviour
     public float upBias = 0.5f;
     public float forwardBias = 1f;
     public float torque = 10000f;
+    public float xCameraLock = 0.2f;
 
     private float _speed;
     private bool _isOnGround;
@@ -40,7 +42,7 @@ public class NoclipPlayerController : MonoBehaviour
         float mouseX = Input.GetAxis("Mouse X") * 5;
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         // 2. Calculate vertical camera rotation (Look Up/Down)
-        xRotation -= Mathf.Lerp(mouseX, 0, _rb.linearVelocity.z * 0.025f);
+        xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
 
 
@@ -126,7 +128,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             Vector3 rotationDiff = transform.localRotation.eulerAngles - _previousRotation;
             print((rotationDiff * (torque * Time.deltaTime)));
-            _rb.AddForce(new Vector3(-Math.Abs(Mathf.Lerp(0, 1, rotationDiff.y)), 0 ,0) * (torque * Time.deltaTime), ForceMode.Impulse);
+            _rb.AddForce(-_rb.linearVelocity * Time.deltaTime * torque, ForceMode.Force);
         }
 
         _previousRotation = transform.localRotation.eulerAngles;
