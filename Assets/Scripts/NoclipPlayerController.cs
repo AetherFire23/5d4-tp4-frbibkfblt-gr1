@@ -132,11 +132,18 @@ public class NoclipPlayerController : MonoBehaviour
         if (!_isOnGround)
         {
             // _rb.AddForce(-_rb.linearVelocity * Time.deltaTime * torque, ForceMode.Force);
-            ApplyTorque();
-            if (!_wingsActive)
+
+
+            if (!_stationaryFlightActive)
             {
-                _rb.AddForce(Vector3.up * (upBias * wingForce / 1.5f * Time.deltaTime), ForceMode.Force);
+                ApplyTorque();
             }
+
+
+            // if (!_wingsActive && !_stationaryFlightActive)
+            // {
+            //     _rb.AddForce(Vector3.up * (upBias * wingForce / 3f * Time.deltaTime), ForceMode.Force);
+            // }
         }
 
         _previousFacingDirection = transform.forward;
@@ -145,8 +152,12 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void ApplyTorque()
     {
-        _rb.AddForce(Vector3.Lerp(Vector3.zero, -_rb.linearVelocity*torque*Time.deltaTime/3, _rb.linearVelocity.x), ForceMode.Force);
-        _rb.AddForce(transform.forward*torque*10f*Time.deltaTime, ForceMode.Force);
+        print(_rb.linearVelocity.x);
+        _rb.AddForce(
+            Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * torque * Time.deltaTime / 3, Math.Abs(_rb.linearVelocity.x)),
+            ForceMode.Force);
+        _rb.AddForce(Vector3.Lerp(Vector3.zero, transform.forward * torque /5 * Time.deltaTime, Math.Abs(_rb.linearVelocity.x)),
+            ForceMode.Impulse);
         // _rb.AddTorque(_previousRotation * torque, ForceMode.Force);
         // _rb.AddForce(rotationDiff.normalized * torque / 2, ForceMode.Force);
     }
