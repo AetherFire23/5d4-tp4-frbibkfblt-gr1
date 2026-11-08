@@ -2943,10 +2943,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxForwardSpeed: 500
-  maxUpSpeed: 500
   wingForce: 6500
   upBias: 0.7
   forwardBias: 0.6
+  torque: 500
+  xCameraLock: 0.02
 --- !u!65 &1996513452
 BoxCollider:
   m_ObjectHideFlags: 0

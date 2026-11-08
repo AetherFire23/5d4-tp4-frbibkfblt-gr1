@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using Unity.Collections;
 using Unity.VisualScripting;
+using UnityEditor;
 using UnityEngine;
 
 public class NoclipPlayerController : MonoBehaviour
@@ -18,7 +19,8 @@ public class NoclipPlayerController : MonoBehaviour
     private bool _stationaryFlightActive = false;
     private bool _wingsActive = false;
     private HashSet<Vector3> _staticFlightDirections = new HashSet<Vector3>();
-    private Vector3 _previousRotation = Vector3.zero;
+    private Vector3 _previousFacingDirection = Vector3.zero;
+    private Animator _animator;
 
     private Rigidbody _rb;
 
@@ -27,6 +29,7 @@ public class NoclipPlayerController : MonoBehaviour
     {
         Cursor.lockState = CursorLockMode.Locked;
         _rb = GetComponent<Rigidbody>();
+        _animator = GetComponent<Animator>();
     }
 
     private float xRotation = 0f;
@@ -56,6 +59,7 @@ public class NoclipPlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
+            _animator.speed = 1;
             _wingsActive = true;
             if (_isOnGround)
                 _rb.AddForce(transform.up * wingForce * Time.deltaTime, ForceMode.Impulse);
@@ -64,6 +68,7 @@ public class NoclipPlayerController : MonoBehaviour
         if (Input.GetButtonUp("Jump"))
         {
             _wingsActive = false;
+            _animator.speed = 0f;
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -110,7 +115,7 @@ public class NoclipPlayerController : MonoBehaviour
     {
         if (_wingsActive && !_stationaryFlightActive)
         {
-            _rb.linearDamping = 0.05f;
+            _rb.linearDamping = 0.00f;
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
             _rb.AddForce(Vector3.up * (upBias * wingForce * Time.deltaTime), ForceMode.Force);
         }
@@ -126,13 +131,24 @@ public class NoclipPlayerController : MonoBehaviour
 
         if (!_isOnGround)
         {
-            Vector3 rotationDiff = transform.localRotation.eulerAngles - _previousRotation;
-            print((rotationDiff * (torque * Time.deltaTime)));
-            _rb.AddForce(-_rb.linearVelocity * Time.deltaTime * torque, ForceMode.Force);
+            // _rb.AddForce(-_rb.linearVelocity * Time.deltaTime * torque, ForceMode.Force);
+            ApplyTorque();
+            if (!_wingsActive)
+            {
+                _rb.AddForce(Vector3.up * (upBias * wingForce / 1.5f * Time.deltaTime), ForceMode.Force);
+            }
         }
 
-        _previousRotation = transform.localRotation.eulerAngles;
+        _previousFacingDirection = transform.forward;
         _staticFlightDirections.Clear();
+    }
+
+    private void ApplyTorque()
+    {
+        _rb.AddForce(Vector3.Lerp(Vector3.zero, -_rb.linearVelocity*torque*Time.deltaTime/3, _rb.linearVelocity.x), ForceMode.Force);
+        _rb.AddForce(transform.forward*torque*10f*Time.deltaTime, ForceMode.Force);
+        // _rb.AddTorque(_previousRotation * torque, ForceMode.Force);
+        // _rb.AddForce(rotationDiff.normalized * torque / 2, ForceMode.Force);
     }
 
     void OnCollisionEnter(Collision collision)
