@@ -7,7 +7,7 @@ public class FoodManager : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
-        
+        AllItemsManager.instance.registerItem(this.gameObject);
     }
 
     public void initializer(FoodType foodType)
@@ -23,9 +23,14 @@ public class FoodManager : MonoBehaviour
     {
         this.transform.SetParent(oiseau);
     }
-    public void detacher()
+    public void detachItem()
     {
         this.transform.SetParent(null);
+    }
+    public FoodType eat()
+    {
+        Destroy(this.gameObject);
+        return this.foodType;
     }
 }
 public enum FoodType
