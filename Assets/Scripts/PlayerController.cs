@@ -138,6 +138,11 @@ public class NoclipPlayerController : MonoBehaviour
 
         }
 
+        if (IsFreeFlying())
+        {
+            ApplyTorque();
+        }
+
         _previousFacingDirection = transform.forward;
         _staticFlightDirections.Clear();
     }
