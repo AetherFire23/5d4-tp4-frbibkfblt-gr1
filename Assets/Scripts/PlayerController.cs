@@ -27,9 +27,16 @@ public class NoclipPlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+
+    }
+
+    private void Awake()
+    {
         Cursor.lockState = CursorLockMode.Locked;
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
+        _rb.maxLinearVelocity = maxForwardSpeed;
+        _rb.maxAngularVelocity = maxForwardSpeed;
     }
 
     private float xRotation = 0f;
@@ -39,17 +46,12 @@ public class NoclipPlayerController : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        _rb.maxLinearVelocity = maxForwardSpeed;
-        _rb.maxAngularVelocity = maxForwardSpeed;
-        // 1. Get Mouse input multiplied by sensitivity
         float mouseX = Input.GetAxis("Mouse X") * 5;
         float mouseY = Input.GetAxis("Mouse Y") * 5;
-        // 2. Calculate vertical camera rotation (Look Up/Down)
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
+        yRotation = Mathf.Clamp(yRotation, -100f, 70f);
 
-
-        // 3. Apply vertical rotation directly to this camera
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
 
         HandleInput();
@@ -61,8 +63,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _animator.speed = 1;
             _wingsActive = true;
-            if (_isOnGround)
-                _rb.AddForce(transform.up * wingForce * Time.deltaTime, ForceMode.Impulse);
+            if (_isOnGround) _rb.AddForce(transform.up * (wingForce * Time.deltaTime), ForceMode.Impulse); // small jump to kickstart flight
         }
 
         if (Input.GetButtonUp("Jump"))
@@ -75,14 +76,14 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _stationaryFlightActive = true;
             _rb.useGravity = false;
-            // _rb.constraints = RigidbodyConstraints.Free;
+            _rb.linearDamping = 0.95f; // slow down a lot
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
         {
             _stationaryFlightActive = false;
             _rb.useGravity = true;
-            // _rb.constraints = RigidbodyConstraints.None;
+            _rb.linearDamping = 0.00f; // stop slowing down
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -105,7 +106,7 @@ public class NoclipPlayerController : MonoBehaviour
             _staticFlightDirections.Add(transform.right);
         }
 
-        if (_wingsActive)
+        if (_wingsActive) // go up if flying
         {
             _staticFlightDirections.Add(transform.up);
         }
@@ -113,53 +114,55 @@ public class NoclipPlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
-        if (_wingsActive && !_stationaryFlightActive)
+        if (IsFlyingWithWings())
         {
-            _rb.linearDamping = 0.00f;
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
             _rb.AddForce(Vector3.up * (upBias * wingForce * Time.deltaTime), ForceMode.Force);
         }
-        else if (_stationaryFlightActive)
+        else if (IsStationaryFlightActive())
         {
             foreach (var staticFlightDirection in _staticFlightDirections)
             {
-                _rb.AddForce(staticFlightDirection * Time.deltaTime * wingForce / 2, ForceMode.Force);
+                _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
             }
 
-            _rb.linearDamping = 0.95f;
         }
-
-        if (!_isOnGround)
+        if (IsFreeFlying())
         {
-            // _rb.AddForce(-_rb.linearVelocity * Time.deltaTime * torque, ForceMode.Force);
-
-
-            if (!_stationaryFlightActive)
-            {
-                ApplyTorque();
-            }
-
-
-            // if (!_wingsActive && !_stationaryFlightActive)
-            // {
-            //     _rb.AddForce(Vector3.up * (upBias * wingForce / 3f * Time.deltaTime), ForceMode.Force);
-            // }
+            ApplyTorque();
         }
 
         _previousFacingDirection = transform.forward;
         _staticFlightDirections.Clear();
     }
 
+    private bool IsFlyingWithWings()
+    {
+        return _wingsActive && !_stationaryFlightActive;
+    }
+
+    private bool IsStationaryFlightActive()
+    {
+        return _stationaryFlightActive;
+    }
+
+    private bool IsFreeFlying()
+    {
+        return !_isOnGround &&  !_stationaryFlightActive;
+    }
+
+    /// <summary>
+    /// Allows the bird able to turn even when wings are inactive
+    /// </summary>
     private void ApplyTorque()
     {
-        print(_rb.linearVelocity.x);
-        _rb.AddForce(
-            Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * torque * Time.deltaTime / 3, Math.Abs(_rb.linearVelocity.x)),
+        // slow down bird in direction of velocity
+        _rb.AddForce(Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * (torque * Time.deltaTime) / 4, Math.Abs(_rb.linearVelocity.x)),
             ForceMode.Force);
-        _rb.AddForce(Vector3.Lerp(Vector3.zero, transform.forward * torque /5 * Time.deltaTime, Math.Abs(_rb.linearVelocity.x)),
-            ForceMode.Impulse);
-        // _rb.AddTorque(_previousRotation * torque, ForceMode.Force);
-        // _rb.AddForce(rotationDiff.normalized * torque / 2, ForceMode.Force);
+        
+        // speed up bird in forward direction
+        _rb.AddForce(Vector3.Lerp(Vector3.zero, transform.forward * (torque * 5 * Time.deltaTime), Math.Abs(_rb.linearVelocity.x)),
+            ForceMode.Force);
     }
 
     void OnCollisionEnter(Collision collision)
