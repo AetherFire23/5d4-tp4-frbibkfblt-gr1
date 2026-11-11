@@ -18,7 +18,8 @@ public class NewTestScript
     public IEnumerator NewTestScriptWithEnumeratorPasses()
     {
         GameObject gameobject = new GameObject();
-        
+
+
         // Use the Assert class to test conditions.
         // Use yield to skip a frame.
         yield return null;
