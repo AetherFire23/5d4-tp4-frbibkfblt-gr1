@@ -63,7 +63,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _animator.speed = 1;
             _wingsActive = true;
-            if (_isOnGround) _rb.AddForce(transform.up * (wingForce * Time.deltaTime), ForceMode.Impulse); // small jump to kickstart flight
+            if (_isOnGround) _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f), ForceMode.Impulse); // small jump to kickstart flight
         }
 
         if (Input.GetButtonUp("Jump"))
@@ -114,6 +114,16 @@ public class NoclipPlayerController : MonoBehaviour
 
     void FixedUpdate()
     {
+        if (_isOnGround)
+        {
+            _rb.constraints = RigidbodyConstraints.FreezePositionX  | RigidbodyConstraints.FreezePositionZ;
+        }
+        else
+        {
+            _rb.constraints = RigidbodyConstraints.None;
+        }
+
+        
         if (IsFlyingWithWings())
         {
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
@@ -126,15 +136,6 @@ public class NoclipPlayerController : MonoBehaviour
                 _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
             }
 
-        }
-        if (IsFreeFlying())
-        {
-            ApplyTorque();
-        }
-
-        if (_isOnGround)
-        {
-            
         }
 
         _previousFacingDirection = transform.forward;
@@ -175,8 +176,9 @@ public class NoclipPlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isOnGround = true;
-            _rb.linearDamping = 0.95f;
+            _rb.linearDamping = 0.5f;
             _rb.linearVelocity /= 10;
+            _rb.mass = 25;
             _rb.useGravity = false;
         }
     }
@@ -187,6 +189,7 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _isOnGround = false;
             _rb.linearDamping = 0.0f;
+            _rb.mass = 10;
             _rb.useGravity = true;
         }
     }
