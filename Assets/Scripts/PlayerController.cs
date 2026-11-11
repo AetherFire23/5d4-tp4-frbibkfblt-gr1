@@ -4,6 +4,7 @@ using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEditor;
 using UnityEngine;
+using UnityEngine.AI;
 
 public class NoclipPlayerController : MonoBehaviour
 {
@@ -21,6 +22,8 @@ public class NoclipPlayerController : MonoBehaviour
     private HashSet<Vector3> _staticFlightDirections = new HashSet<Vector3>();
     private Vector3 _previousFacingDirection = Vector3.zero;
     private Animator _animator;
+    private bool _isPerching = false;
+    private Vector3 perchPoint = Vector3.zero;
 
     private Rigidbody _rb;
 
@@ -110,10 +113,21 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _staticFlightDirections.Add(transform.up);
         }
+
+        if (Input.GetKey(KeyCode.LeftControl) && !_isOnGround)
+        {
+            Perch();
+        }
     }
 
     void FixedUpdate()
     {
+        if (_isPerching)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, perchPoint, 5 * Time.deltaTime);
+            _isPerching = false;
+        }
+
         if (_isOnGround)
         {
             _rb.constraints = RigidbodyConstraints.FreezePositionX  | RigidbodyConstraints.FreezePositionZ;
@@ -196,6 +210,17 @@ public class NoclipPlayerController : MonoBehaviour
             _rb.linearDamping = 0.0f;
             _rb.mass = 10;
             _rb.useGravity = true;
+        }
+    }
+
+    void Perch()
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, -transform.up, out hit);
+        if (hit.distance < 15f)
+        {
+            _isPerching = true;
+            perchPoint = hit.point;
         }
     }
 }
