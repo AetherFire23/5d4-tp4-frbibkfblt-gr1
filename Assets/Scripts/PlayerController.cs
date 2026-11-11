@@ -132,6 +132,11 @@ public class NoclipPlayerController : MonoBehaviour
             ApplyTorque();
         }
 
+        if (_isOnGround)
+        {
+            
+        }
+
         _previousFacingDirection = transform.forward;
         _staticFlightDirections.Clear();
     }
@@ -172,6 +177,7 @@ public class NoclipPlayerController : MonoBehaviour
             _isOnGround = true;
             _rb.linearDamping = 0.95f;
             _rb.linearVelocity /= 10;
+            _rb.useGravity = false;
         }
     }
 
@@ -180,12 +186,8 @@ public class NoclipPlayerController : MonoBehaviour
         if (collision.gameObject.CompareTag("Ground"))
         {
             _isOnGround = false;
-            _rb.linearDamping = 0.1f;
+            _rb.linearDamping = 0.0f;
+            _rb.useGravity = true;
         }
-    }
-
-    bool ForceFlightActive()
-    {
-        return _wingsActive;
     }
 }
