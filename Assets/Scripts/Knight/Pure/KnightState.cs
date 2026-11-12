@@ -1,5 +1,4 @@
 ﻿using System.Collections.Generic;
-using UnityPipeline.Microsoft.CodeAnalysis.CSharp.Syntax;
 
 namespace Knight.Pure
 {
@@ -21,26 +20,7 @@ namespace Knight.Pure
 
         public void ReceiveReagent(Reagent reagent)
         {
-            foreach (KnightAffliction affliction in reagent.GetCuresOf(this))
-            {
-                affliction.Cure();
-            }
-
-            foreach (KnightAffliction affliction in reagent.GetInflictionsOf(this))
-            {
-                affliction.Inflict();
-            }
-
-            foreach (KnightAffliction affliction in reagent.GetPreventionsOf(this))
-            {
-                affliction.Prevent();
-            }
-
-            foreach (KnightAffliction affliction in reagent.GetPersistencesOf(this))
-            {
-                affliction.Persist();
-            }
-
+            reagent.ApplyEffect(this);
 
             // Lose health every time you give a reagent to the knight, but he still has all afflictions uncured. 
             // Can happen when afflictions are Persistent. 

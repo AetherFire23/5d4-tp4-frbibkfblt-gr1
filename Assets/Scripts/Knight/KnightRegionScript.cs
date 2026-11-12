@@ -13,7 +13,7 @@ public class KnightRegionScript : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        // bool isGoodFood = collision.gameObject.tag == "GoodFood";
+        bool isGoodFood = collision.gameObject.tag == "Reagent";
         // if (isGoodFood)
         // {
         //     this.knight.ReceiveGoodFood();

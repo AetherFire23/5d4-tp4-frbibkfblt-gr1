@@ -30,40 +30,35 @@ namespace Knight.Pure
             Persistences = persistences?.ToList() ?? new List<KnightAfflictionTypes>();
         }
 
-        public List<KnightAffliction> GetCuresOf(KnightState knight)
+        /**
+         * Applies every effect of this reagent to the knight, in order: cures, inflictions, preventions, persistences.
+         */
+        public void ApplyEffect(KnightState knight)
         {
-            List<KnightAffliction> cured = knight.Afflictions
-                .Where(a => Cures.Contains(a.KnightAfflictionType))
-                .ToList();
+            foreach (KnightAffliction affliction in knight.Afflictions)
+            {
+                KnightAfflictionTypes afflictionType = affliction.KnightAfflictionType;
+                
+                if (Cures.Contains(afflictionType))
+                {
+                    affliction.Cure();
+                }
 
-            return cured;
-        }
+                if (Inflictions.Contains(afflictionType))
+                {
+                    affliction.Inflict();
+                }
 
-        public List<KnightAffliction> GetInflictionsOf(KnightState knight)
-        {
-            List<KnightAffliction> inflicts = knight.Afflictions
-                .Where(a => Inflictions.Contains(a.KnightAfflictionType))
-                .ToList();
+                if (Preventions.Contains(afflictionType))
+                {
+                    affliction.Prevent();
+                }
 
-            return inflicts;
-        }
-
-        public List<KnightAffliction> GetPreventionsOf(KnightState knight)
-        {
-            List<KnightAffliction> preventions = knight.Afflictions
-                .Where(a => Preventions.Contains(a.KnightAfflictionType))
-                .ToList();
-
-            return preventions;
-        }
-
-        public List<KnightAffliction> GetPersistencesOf(KnightState knight)
-        {
-            List<KnightAffliction> persistences = knight.Afflictions
-                .Where(a => Persistences.Contains(a.KnightAfflictionType))
-                .ToList();
-
-            return persistences;
+                if (Persistences.Contains(afflictionType))
+                {
+                    affliction.Persist();
+                }
+            }
         }
     }
 }

@@ -1,24 +1,40 @@
-﻿- Je prends un item
+﻿# Reagent Loop 
 
-- Je drop un item dans la KnightRegion
-    - Comment on sait que ca a eu un effet positif ou negatif ? ( Effet de particles ) rouge si bon, vert si mauvais
+## 
+Mecanique de 4 Afflictions
 
+`Hunger`
 
-- Concept de paliers: amelioration de l'etat du 
+`Bleeding`
 
-- Blessures par thematique
+`Curse`
 
-- Zones vrm reliees a la blessure.
+`Poison`
 
-Mecanique de 4 states
+Les items ont souvent un effet positif (`cure`), et un effet négatif (`inflict`). 
 
-Fed
+`cure` bascule l'état `IsCured` à `true`
 
-Bleeding
+`inflict` bascule l'état `IsCured` à `false`
 
-Cursed (magical)
+## États spéciaux (prévention, persistence)
 
-Poisoned
+Les `affliction` peuvent etre soit en état `persistent` ou en état `prevented`.
 
+La `prevention` a pour effet que l'affliction est protégée d'être `inflicted` une (1) fois.
 
-Certains items feraient en sorte de switch des states a on/off
+La `persistence` a pour effet qu'une `cure` de l'`affliction` est ineffective pour une (1) `cure`. 
+
+## Conditions de win
+
+On Gagne quand les 4 états sont à `IsCured = true`
+
+## Condition de mort.
+
+On Perd quand durant 3 rounds (non consécutives), toutes les afflictions sont actives en même temps. 
+
+Cela devrait arriver rarement, surtout lorsque le joueur donne consécutivement plusieurs reagents très négatifs qui donne par exemple plusieurs `persistence` sur des afflictions diff
+
+## Idées
+
+Frapper une piege, out te faire hit par un chat, etc. ca rend l'item moins bon (gagne une persistence, peut gagner )
