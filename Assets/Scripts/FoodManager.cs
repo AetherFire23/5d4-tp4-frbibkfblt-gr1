@@ -25,11 +25,18 @@ public class FoodManager : MonoBehaviour
     public void AttachItem(Transform oiseau)
     {
         this.transform.SetParent(oiseau);
+        this.transform.localPosition = Vector3.zero;
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.FreezeAll;
     }
 
     public void DetachItem()
     {
         this.transform.SetParent(null);
+        Rigidbody rb = this.GetComponent<Rigidbody>();
+        rb.constraints = RigidbodyConstraints.None;
+        this.transform.Translate(new Vector3(0,1,0), Space.World);
+
     }
 
     public FoodType Eat()

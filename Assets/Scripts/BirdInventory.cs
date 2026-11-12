@@ -30,6 +30,8 @@ public class BirdInventory : MonoBehaviour
         }
     }
 
+    private GameObject holding;
+
     // Update is called once per frame
     void Update()
     {
@@ -39,9 +41,16 @@ public class BirdInventory : MonoBehaviour
             {
                 Debug.Log("Inside!");
                 GameObject go = this.gameobjects.ElementAt(0);
+                this.holding = go;
                 FoodManager foodManager = go.GetComponent<FoodManager>();
                 foodManager.AttachItem(this.transform);
             }
+        }
+
+        if (Input.GetKeyUp(KeyCode.F))
+        {
+            FoodManager foodManager = holding.GetComponent<FoodManager>();
+            foodManager.DetachItem();
         }
     }
 }
