@@ -9,12 +9,14 @@ namespace Knight.Pure
         public string Name { get; private set; }
         public List<KnightAfflictionTypes> Cures { get; set; }
         public List<KnightAfflictionTypes> Inflictions { get; set; }
-        public List<KnightAfflictionTypes> Protections { get; set; }
+        public List<KnightAfflictionTypes> Preventions { get; set; }
+        public List<KnightAfflictionTypes> Persistences { get; set; }
 
         public Reagent(string name,
             IEnumerable<KnightAfflictionTypes> cures = null,
             IEnumerable<KnightAfflictionTypes> inflictions = null,
-            IEnumerable<KnightAfflictionTypes> protections = null)
+            IEnumerable<KnightAfflictionTypes> preventions = null,
+            IEnumerable<KnightAfflictionTypes> persistences = null)
         {
             if (string.IsNullOrWhiteSpace(name))
             {
@@ -24,7 +26,8 @@ namespace Knight.Pure
             Name = name;
             Cures = cures?.ToList() ?? new List<KnightAfflictionTypes>();
             Inflictions = inflictions?.ToList() ?? new List<KnightAfflictionTypes>();
-            Protections = protections?.ToList() ?? new List<KnightAfflictionTypes>();
+            Preventions = preventions?.ToList() ?? new List<KnightAfflictionTypes>();
+            Persistences = persistences?.ToList() ?? new List<KnightAfflictionTypes>();
         }
 
         public List<KnightAffliction> GetCuresOf(KnightState knight)
@@ -45,13 +48,22 @@ namespace Knight.Pure
             return inflicts;
         }
 
-        public List<KnightAffliction> GetProtectionsOf(KnightState knight)
+        public List<KnightAffliction> GetPreventionsOf(KnightState knight)
         {
-            List<KnightAffliction> protections = knight.Afflictions
-                .Where(a => Protections.Contains(a.KnightAfflictionType))
+            List<KnightAffliction> preventions = knight.Afflictions
+                .Where(a => Preventions.Contains(a.KnightAfflictionType))
                 .ToList();
 
-            return protections;
+            return preventions;
+        }
+
+        public List<KnightAffliction> GetPersistencesOf(KnightState knight)
+        {
+            List<KnightAffliction> persistences = knight.Afflictions
+                .Where(a => Persistences.Contains(a.KnightAfflictionType))
+                .ToList();
+
+            return persistences;
         }
     }
 }

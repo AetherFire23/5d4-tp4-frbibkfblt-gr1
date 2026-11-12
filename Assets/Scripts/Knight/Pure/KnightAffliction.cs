@@ -1,5 +1,4 @@
-﻿using Codice.Client.BaseCommands;
-
+﻿
 namespace Knight.Pure
 {
     public class KnightAffliction
@@ -7,35 +6,58 @@ namespace Knight.Pure
         public KnightAfflictionTypes KnightAfflictionType { get; private set; }
 
         public bool IsCured { get; private set; }
-        public bool IsProtected { get; set; } = false;
+
+        /**
+         * The Affliction is Prevented from being inflicted this curse. The next Infliction does not apply.
+         */
+        public bool IsPrevented { get; set; } = false;
+
+        /**
+         * The Affliction is Persistent, the next cure does not apply.
+         */
+        public bool IsPersistent { get; set; } = false;
 
         public KnightAffliction(KnightAfflictionTypes knightAfflictionType)
         {
             this.KnightAfflictionType = knightAfflictionType;
         }
 
+        /**
+         * Tries to cure. If the Affliction is Persistent, it is not cured but the Persistent status is set to false.
+         */
         public void Cure()
         {
+            if (IsPersistent)
+            {
+                IsPersistent = false;
+                return;
+            }
+
             IsCured = true;
         }
 
         /**
-         * Tries to inflict damage, Will not flip IsCured to False if it is protected.
+         * Tries to inflict damage. If the
          */
         public void Inflict()
         {
-            if (IsProtected)
+            if (IsPrevented)
             {
-                this.IsProtected = false;
+                this.IsPrevented = false;
                 return;
             }
 
             IsCured = false;
         }
 
-        public void Protect()
+        public void Prevent()
         {
-            this.IsProtected = true;
+            this.IsPrevented = true;
+        }
+
+        public void Persist()
+        {
+            this.IsPersistent = true;
         }
     }
 }
