@@ -1,26 +1,66 @@
-using System.Collections;
+using Knight.Pure;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
-public class NewTestScript
+namespace Scenes.Tests
 {
-    // A Test behaves as an ordinary method
-    [Test]
-    public void NewTestScriptSimplePasses()
+    public class NewTestScript
     {
-        // Use the Assert class to test conditions
-    }
+        [Test]
+        public void GivenHunger_WhenConsumingCuringReagent_ThenHungerCured()
+        {
+            KnightState knight = new KnightState();
+            Reagent moldyBread = new Reagent("Moldy Bread",
+                new[] { KnightAfflictionTypes.Hunger },
+                new[] { KnightAfflictionTypes.Poison });
 
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator NewTestScriptWithEnumeratorPasses()
-    {
-        GameObject gameobject = new GameObject();
-        
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
+            knight.ReceiveReagent(moldyBread);
+
+            Assert.True(knight.Hunger.IsCured);
+        }
+
+        [Test]
+        public void GivenPoisonPersistence_WhenConsumingCure_ThenIsNotCured()
+        {
+            KnightState knight = new KnightState();
+            Reagent poisonPersistence = new Reagent("Makes Poison persistent",
+                persistences: new[] { KnightAfflictionTypes.Poison });
+            Reagent poisonHeal = new Reagent("Tries to heal ",
+                cures: new[] { KnightAfflictionTypes.Poison });
+            knight.ReceiveReagent(poisonPersistence);
+            
+            knight.ReceiveReagent(poisonHeal);
+
+            Assert.False(knight.Hunger.IsCured);
+        }
+
+        [Test]
+        public void GivenCuredPoisonPrevention_WhenConsumingPoison_ThenStaysCured()
+        {
+            KnightState knight = new KnightState();
+            Reagent poisonHeal = new Reagent("Heals poison",
+                cures: new[] { KnightAfflictionTypes.Poison });
+            Reagent poisonPrevention = new Reagent("Protects from poison",
+                preventions: new[] { KnightAfflictionTypes.Poison });
+            Reagent poison = new Reagent("Poison",
+                inflictions: new[] { KnightAfflictionTypes.Poison });
+            knight.ReceiveReagent(poisonHeal);
+            knight.ReceiveReagent(poisonPrevention);
+
+            knight.ReceiveReagent(poison);
+
+            Assert.True(knight.Poison.IsCured);
+        }
+
+        [Test]
+        public void GivenAllAfflictionsUncured_WhenConsumingReagents_ThenLosesOneHealthEachTime()
+        {
+            KnightState knight = new KnightState();
+            Reagent water = new Reagent("Water");
+
+            knight.ReceiveReagent(water);
+            knight.ReceiveReagent(water);
+
+            Assert.AreEqual(1, knight.Health);
+        }
     }
 }

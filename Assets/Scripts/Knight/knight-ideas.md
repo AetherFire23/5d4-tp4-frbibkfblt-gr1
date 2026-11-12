@@ -1,20 +1,40 @@
-﻿- Je prends un item
+﻿# Reagent Loop 
 
-- Je drop un item dans la KnightRegion
-    - Comment on sait que ca a eu un effet positif ou negatif ? ( Effet de particles ) rouge si bon, vert si mauvais
+## 
+Mecanique de 4 Afflictions
 
+`Hunger`
 
-- Concept de paliers: amelioration de l'etat du chevalier
-Sauts de 3 bons items a la fois 
-    - Palier 1: 
-        - Message affiche au joueur: Your fallen Knight has not moved nor spoken a word in weeks. May rest - or perhaps aid - put an end to his slumber;
-        - Comportement du chevalier: non-verbal
+`Bleeding`
 
-    - Palier 2: 
-        - Message affiche au joueur: Your fallen Knight has begun to move and eat. However, he is still speechless.
-        - Comportement du chevalier: Bouge et mange mais speechless.
+`Curse`
 
-    - Palier 3: 3 bons items
-        - Message affiche au joueur: Your fallen Knight has become verbal, altough his speech is slurrech and often confused.
-        - Comportement du chevalier: non-verbal
-	
+`Poison`
+
+Les items ont souvent un effet positif (`cure`), et un effet négatif (`inflict`). 
+
+`cure` bascule l'état `IsCured` à `true`
+
+`inflict` bascule l'état `IsCured` à `false`
+
+## États spéciaux (prévention, persistence)
+
+Les `affliction` peuvent etre soit en état `persistent` ou en état `prevented`.
+
+La `prevention` a pour effet que l'affliction est protégée d'être `inflicted` une (1) fois.
+
+La `persistence` a pour effet qu'une `cure` de l'`affliction` est ineffective pour une (1) `cure`. 
+
+## Conditions de win
+
+On Gagne quand les 4 états sont à `IsCured = true`
+
+## Condition de mort.
+
+On Perd quand durant 3 rounds (non consécutives), toutes les afflictions sont actives en même temps. 
+
+Cela devrait arriver rarement, surtout lorsque le joueur donne consécutivement plusieurs reagents très négatifs qui donne par exemple plusieurs `persistence` sur des afflictions diff
+
+## Idées
+
+Frapper une piege, out te faire hit par un chat, etc. ca rend l'item moins bon (gagne une persistence, peut gagner )
