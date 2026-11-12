@@ -1,4 +1,5 @@
 using Knight;
+using Knight.Pure;
 using UnityEngine;
 
 public class KnightRegionScript : MonoBehaviour

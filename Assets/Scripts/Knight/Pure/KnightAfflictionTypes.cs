@@ -1,6 +1,6 @@
-﻿namespace Knight
+﻿namespace Knight.Pure
 {
-    public enum Stats
+    public enum KnightAfflictionTypes
     {
         Hunger,
         Bleeding,

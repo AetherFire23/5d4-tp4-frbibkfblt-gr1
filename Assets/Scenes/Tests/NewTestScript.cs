@@ -1,27 +1,18 @@
-using System.Collections;
+using Knight.Pure;
 using NUnit.Framework;
-using UnityEngine;
-using UnityEngine.TestTools;
 
 public class NewTestScript
 {
-    // A Test behaves as an ordinary method
     [Test]
-    public void NewTestScriptSimplePasses()
+    public void GivenHunger_WhenConsumingMoldyBread_ThenCuresHunger()
     {
-        // Use the Assert class to test conditions
-    }
+        KnightState knight = new KnightState();
+        Reagent moldyBread = new Reagent("Moldy Bread",
+            new[] { KnightAfflictionTypes.Hunger },
+            new[] { KnightAfflictionTypes.Poison });
 
-    // A UnityTest behaves like a coroutine in Play Mode. In Edit Mode you can use
-    // `yield return null;` to skip a frame.
-    [UnityTest]
-    public IEnumerator NewTestScriptWithEnumeratorPasses()
-    {
-        GameObject gameobject = new GameObject();
+        knight.ReceiveReagent(moldyBread);
 
-
-        // Use the Assert class to test conditions.
-        // Use yield to skip a frame.
-        yield return null;
+        Assert.True(knight.Hunger.IsCured);
     }
 }
