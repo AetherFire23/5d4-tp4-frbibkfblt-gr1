@@ -13,19 +13,8 @@ public class KnightRegionScript : MonoBehaviour
 
     public void OnCollisionEnter(Collision collision)
     {
-        bool isGoodFood = collision.gameObject.tag == "Reagent";
-        // if (isGoodFood)
-        // {
-        //     this.knight.ReceiveGoodFood();
-        // }
-        // else
-        // {
-        //     this.knight.ReceiveBadFood();
-        // }
-        //
-        // if (this.knight.IsDead)
-        // {
-        //     // TODO: Gameover, show panel to go back 
-        // }
+        bool isReagent = collision.gameObject.tag == "Reagent";
+        
+        // Quand tu hit un reagent, 
     }
 }
