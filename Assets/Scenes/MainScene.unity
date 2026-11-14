@@ -1677,7 +1677,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60d260f174410c543acabf7593e7ef88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  factor: -0.016
+  completeFadeDistance: 15
+  fullyOnDistance: 10
   images:
   - {fileID: 1547520254}
   - {fileID: 561070201}

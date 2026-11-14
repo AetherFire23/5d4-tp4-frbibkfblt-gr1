@@ -27,7 +27,7 @@ public class BirdInventory : MonoBehaviour
         }
         else if (mustDropItem)
         {
-           // StopGrabbing();
+           StopGrabbing();
         }
     }
 
