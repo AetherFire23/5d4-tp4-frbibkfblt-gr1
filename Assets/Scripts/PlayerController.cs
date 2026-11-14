@@ -54,6 +54,7 @@ public class NoclipPlayerController : MonoBehaviour
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
         yRotation = Mathf.Clamp(yRotation, -100f, 70f);
+        _animator.speed = 0.75f;
 
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
 
@@ -64,15 +65,27 @@ public class NoclipPlayerController : MonoBehaviour
     {
         if (Input.GetButtonDown("Jump"))
         {
-            _animator.speed = 1;
+            _animator.SetBool("flying", true);
+            _animator.SetBool("gliding", false);
+            print("Should be flying, not gliding");
             _wingsActive = true;
-            if (_isOnGround) _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f), ForceMode.Impulse); // small jump to kickstart flight
+            if (_isOnGround)
+            {
+                _animator.SetInteger("hop", 1);
+                _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f),
+                    ForceMode.Impulse); // small jump to kickstart flight
+                StartCoroutine(nameof(ResetHopInt), 1);
+            }
         }
 
         if (Input.GetButtonUp("Jump"))
         {
+            if (!_isOnGround)
+            {
+                _animator.SetBool("gliding", true);
+            }
+            _animator.SetBool("flying", false);
             _wingsActive = false;
-            _animator.speed = 0f;
         }
 
         if (Input.GetKeyDown(KeyCode.LeftShift))
@@ -80,6 +93,9 @@ public class NoclipPlayerController : MonoBehaviour
             _stationaryFlightActive = true;
             _rb.useGravity = false;
             _rb.linearDamping = 0.95f; // slow down a lot
+            _animator.SetBool("flying", true);
+            _animator.SetBool("gliding", false);
+            _animator.speed = 0.10f;
         }
 
         if (Input.GetKeyUp(KeyCode.LeftShift))
@@ -87,6 +103,9 @@ public class NoclipPlayerController : MonoBehaviour
             _stationaryFlightActive = false;
             _rb.useGravity = true;
             _rb.linearDamping = 0.00f; // stop slowing down
+            _animator.SetBool("flying", false);
+            _animator.SetBool("gliding", true);
+            _animator.speed = 0.75f;
         }
 
         if (Input.GetKey(KeyCode.W))
@@ -114,22 +133,35 @@ public class NoclipPlayerController : MonoBehaviour
             _staticFlightDirections.Add(transform.up);
         }
 
-        if (Input.GetKey(KeyCode.LeftControl) && !_isOnGround)
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround)
         {
+            _animator.SetBool("landing", true);
             Perch();
         }
+
+        if (Input.GetKeyUp(KeyCode.LeftControl))
+        {
+            _isPerching = false;
+        }
+
+}
+
+    void ResetHopInt()
+    {
+        _animator.SetInteger("hop", 0);
     }
 
     void FixedUpdate()
     {
         if (_isPerching)
         {
-            transform.position = Vector3.MoveTowards(transform.position, perchPoint, 5 * Time.deltaTime);
-            _isPerching = false;
+            transform.position = Vector3.MoveTowards(transform.position, perchPoint, 10 * Time.deltaTime);
         }
 
         if (_isOnGround)
         {
+            _animator.SetBool("landing", false);
+            _isPerching = false;
             _rb.constraints = RigidbodyConstraints.FreezePositionX  | RigidbodyConstraints.FreezePositionZ;
         }
         else
@@ -194,6 +226,9 @@ public class NoclipPlayerController : MonoBehaviour
     {
         if (collision.gameObject.CompareTag("Ground"))
         {
+            _animator.SetBool("gliding", false);
+            _animator.SetBool("flying", false);
+            // _animator.SetBool("landing", true);
             _isOnGround = true;
             _rb.linearDamping = 0.5f;
             _rb.linearVelocity /= 10;
