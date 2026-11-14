@@ -1,20 +1,30 @@
-using Knight;
 using Knight.Pure;
 using UnityEngine;
 
 public class KnightRegionScript : MonoBehaviour
 {
     private KnightState knight;
+    private BirdInventory birdInventory;
 
     public void Awake()
     {
-        this.knight = new KnightState();
+        birdInventory = FindAnyObjectByType<BirdInventory>();
+        knight = new KnightState();
     }
 
     public void OnCollisionEnter(Collision collision)
     {
-        bool isReagent = collision.gameObject.tag == "Reagent";
+        FoodManager? foodManager = collision.gameObject.GetComponent<FoodManager>();
+        if (foodManager is null)
+        {
+            return;
+        }
         
-        // Quand tu hit un reagent, 
+        this.birdInventory.StopGrabbing();
+
+        knight.ReceiveReagent(foodManager.Reagent);
+
+        Destroy(foodManager.gameObject);
+        
     }
 }

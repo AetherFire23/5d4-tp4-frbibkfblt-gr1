@@ -95,6 +95,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c65c43f44cbf6664fb24d7280eb1e91f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  name: Mushroom
+  cures: 00000000
+  inflicts: 02000000
+  prevents: 
+  persists: 
 --- !u!65 &7689182047030550982
 BoxCollider:
   m_ObjectHideFlags: 0

@@ -1,6 +1,5 @@
 using System.Linq;
 using UnityEngine;
-using UnityEngine.Serialization;
 
 public class BirdInventory : MonoBehaviour
 {
@@ -9,18 +8,17 @@ public class BirdInventory : MonoBehaviour
 
     void Update()
     {
-        bool canGrab = Input.GetKeyDown(KeyCode.E) && grabbedItem is null;
-        bool mustDropItem = Input.GetKeyDown(KeyCode.E) && grabbedItem is not null; 
-        if (canGrab)
+        bool mustGrab = Input.GetKeyDown(KeyCode.E) && grabbedItem is null;
+        bool mustDropItem = Input.GetKeyDown(KeyCode.E) && grabbedItem is not null;
+        if (mustGrab)
         {
             Collider? foodHitWithinRadius = Physics.OverlapSphere(this.transform.position, itemPickupRadius)
                 .Where(x => x.GetComponent<FoodManager>() is not null)
-                .OrderBy(x=> Vector3.Distance(x.transform.position, this.transform.position))
+                .OrderBy(x => Vector3.Distance(x.transform.position, this.transform.position))
                 .FirstOrDefault();
 
             if (foodHitWithinRadius is null)
             {
-                Debug.Log("No item found");
                 return;
             }
 
@@ -29,8 +27,18 @@ public class BirdInventory : MonoBehaviour
         }
         else if (mustDropItem)
         {
-            grabbedItem.DetachItem();
-            grabbedItem = null;
+           // StopGrabbing();
         }
+    }
+
+    public void StopGrabbing()
+    {
+        if (grabbedItem is null)
+        {
+            return;
+        }
+
+        grabbedItem.DetachItem();
+        grabbedItem = null;
     }
 }

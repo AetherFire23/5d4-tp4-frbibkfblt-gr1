@@ -31,7 +31,7 @@ namespace Knight.Pure
         }
 
         /**
-         * Applies every effect of this reagent to the knight, in order: cures, inflictions, preventions, persistences.
+         * Applies every effect of this reagent to the knight
          */
         public void ApplyEffect(KnightState knight)
         {
