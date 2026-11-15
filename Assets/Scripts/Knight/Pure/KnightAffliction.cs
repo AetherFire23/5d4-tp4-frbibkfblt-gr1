@@ -1,11 +1,34 @@
-﻿
+﻿using System;
+
 namespace Knight.Pure
 {
+    public class KnightAfflictionUpdatedEvent
+    {
+        public KnightAfflictionTypes Affliction { get; private set; }
+        public bool IsCured { get; private set; }
+
+        public KnightAfflictionUpdatedEvent(KnightAfflictionTypes affliction, bool isCured)
+        {
+            Affliction = affliction;
+            IsCured = isCured;
+        }
+    }
+
     public class KnightAffliction
     {
+        public event EventHandler<KnightAfflictionUpdatedEvent> OnUpdated;
+        private bool _isCured;
         public KnightAfflictionTypes KnightAfflictionType { get; private set; }
 
-        public bool IsCured { get; private set; }
+        public bool IsCured
+        {
+            get => _isCured;
+            private set
+            {
+                _isCured = value;
+                OnUpdated?.Invoke(this, new KnightAfflictionUpdatedEvent(this.KnightAfflictionType, this.IsCured));
+            }
+        }
 
         /**
          * The Affliction is Prevented from being inflicted this curse. The next Infliction does not apply.

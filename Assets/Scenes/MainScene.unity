@@ -1677,13 +1677,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 60d260f174410c543acabf7593e7ef88, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  knightRegion: {fileID: 1326689280}
   completeFadeDistance: 15
   fullyOnDistance: 10
-  images:
-  - {fileID: 1547520254}
-  - {fileID: 561070201}
-  - {fileID: 1730699898}
-  - {fileID: 1601905360}
+  curse: {fileID: 1547520254}
+  bleeding: {fileID: 561070201}
+  poison: {fileID: 1730699898}
+  hunger: {fileID: 1601905360}
 --- !u!114 &321082480
 MonoBehaviour:
   m_ObjectHideFlags: 0

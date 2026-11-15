@@ -1,37 +1,92 @@
 using System.Collections.Generic;
+using Knight.Pure;
 using UnityEngine;
 using UnityEngine.UI;
 
 public class KnightStatusPanel : MonoBehaviour
 {
+    [SerializeField] private KnightRegionScript knightRegion;
     [SerializeField] private float completeFadeDistance;
     [SerializeField] private float fullyOnDistance; // 
-    
+
     private BirdInventory bird;
     private float MAXIMUM_ALPHA = 1;
-    [SerializeField] private List<Image> images = new List<Image>();
-    
+    private List<Image> images;
+
+    [SerializeField] private Image curse;
+    [SerializeField] private Image bleeding;
+    [SerializeField] private Image poison;
+    [SerializeField] private Image hunger;
+
+    private KnightState knight;
 
     private void Awake()
     {
         bird = FindFirstObjectByType<BirdInventory>();
+        
+        images = new List<Image>()
+        {
+            curse,
+            bleeding,
+            poison,
+            hunger
+        };
+        
+        SubscribeToAfflictionUpdates();
+    }
+
+    private void SubscribeToAfflictionUpdates()
+    {
+        foreach (var knightAffliction in knightRegion.Knight.Afflictions)
+        {
+            knightAffliction.OnUpdated += OnSetAffliction;
+        }
+    }
+
+    public void OnSetAffliction(object source, KnightAfflictionUpdatedEvent e)
+    {
+        Debug.Log("Afflictio updated!");
+        Image afflictionImg = e.Affliction switch
+        {
+            KnightAfflictionTypes.Curse => this.curse,
+            KnightAfflictionTypes.Hunger => this.hunger,
+            KnightAfflictionTypes.Poison => this.poison,
+            KnightAfflictionTypes.Bleeding => this.bleeding,
+        };
+        if (e.IsCured)
+        {
+            Color color = new Color();
+            color.b = 0;
+            color.g = 255;
+            color.r = 0;
+            color.a = color.a;
+            afflictionImg.color = color;
+        }
+        else
+        {
+            Color color = new Color();
+            color.b = 0;
+            color.g = 0;
+            color.r = 255;
+            color.a = color.a;
+            afflictionImg.color = color;
+        }
     }
 
     public void Update()
     {
         HandlePanelOpacity();
     }
-    
 
     private void HandlePanelOpacity()
     {
         // Fonction definie par parties pour la visibilite du panneau. 
         float dist = Vector3.Distance(this.transform.position, bird.transform.position);
 
-        foreach (Image image in this.images)
+        foreach (Image image in images)
         {
             // COmmence toujours a 1
-            float opacity = 1f;
+            float opacity = MAXIMUM_ALPHA;
 
             if (dist > fullyOnDistance)
             {

@@ -3,13 +3,12 @@ using UnityEngine;
 
 public class KnightRegionScript : MonoBehaviour
 {
-    private KnightState knight;
+    public KnightState Knight { get; set; } = new KnightState();
     private BirdInventory birdInventory;
 
     public void Awake()
     {
         birdInventory = FindAnyObjectByType<BirdInventory>();
-        knight = new KnightState();
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -22,9 +21,8 @@ public class KnightRegionScript : MonoBehaviour
         
         this.birdInventory.StopGrabbing();
 
-        knight.ReceiveReagent(foodManager.Reagent);
+        Knight.ReceiveReagent(foodManager.Reagent);
 
         Destroy(foodManager.gameObject);
-        
     }
 }

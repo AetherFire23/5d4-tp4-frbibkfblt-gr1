@@ -21,7 +21,6 @@ public class FoodManager : MonoBehaviour
         this.Reagent = new Reagent(this.name, cures, inflicts, prevents, persists);
     }
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         AllItemsManager.instance.RegisterItem(gameObject);
