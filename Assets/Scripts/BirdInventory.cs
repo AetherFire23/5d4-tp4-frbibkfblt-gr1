@@ -14,7 +14,6 @@ public class BirdInventory : MonoBehaviour
 
     public void OnTriggerEnter(Collider collider)
     {
-        Debug.Log("added");
         if (collider.gameObject.CompareTag("GoodFood") || collider.gameObject.CompareTag("GoodFood"))
         {
             this.gameobjects.Add(collider.gameObject);
@@ -23,7 +22,6 @@ public class BirdInventory : MonoBehaviour
 
     public void OnTriggerExit(Collider collider)
     {
-        Debug.Log("Removed");
         if (collider.gameObject.CompareTag("BadFood") || collider.gameObject.CompareTag("GoodFood"))
         {
             this.gameobjects.Remove(collider.gameObject);
@@ -39,7 +37,6 @@ public class BirdInventory : MonoBehaviour
         {
             if (this.gameobjects.Count > 0)
             {
-                Debug.Log("Inside!");
                 GameObject go = this.gameobjects.ElementAt(0);
                 this.holding = go;
                 FoodManager foodManager = go.GetComponent<FoodManager>();
@@ -49,8 +46,14 @@ public class BirdInventory : MonoBehaviour
 
         if (Input.GetKeyUp(KeyCode.F))
         {
-            FoodManager foodManager = holding.GetComponent<FoodManager>();
-            foodManager.DetachItem();
+            print("drop");
+            DropItem();
         }
+    }
+
+    public void DropItem()
+    {
+        FoodManager foodManager = holding.GetComponent<FoodManager>();
+        foodManager.DetachItem();
     }
 }

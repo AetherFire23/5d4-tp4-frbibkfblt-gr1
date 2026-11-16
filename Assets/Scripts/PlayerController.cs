@@ -25,6 +25,7 @@ public class NoclipPlayerController : MonoBehaviour
     private float yRotation = 0f;
     private float previousXRotation = 0f;
     private float previousYRotation = 0f;
+    private BirdInventory _birdInventory;
 
     private Rigidbody _rb;
 
@@ -118,6 +119,13 @@ public class NoclipPlayerController : MonoBehaviour
 
     void OnCollisionEnter(Collision collision)
     {
+        print(_rb.linearVelocity.magnitude);
+        if (_rb.linearVelocity.magnitude > 15f)
+        {
+            print("drop");
+            _birdInventory.DropItem();
+        }
+
         if (collision.gameObject.CompareTag("Ground")) OnLand();
     }
 
@@ -163,6 +171,7 @@ public class NoclipPlayerController : MonoBehaviour
         _rb.maxLinearVelocity = maxForwardSpeed;
         _rb.maxAngularVelocity = maxForwardSpeed;
         _animator.speed = 0.75f;
+        _birdInventory = GetComponent<BirdInventory>();
     }
 
     void Update()
@@ -242,7 +251,6 @@ public class NoclipPlayerController : MonoBehaviour
 
     private bool IsTurning()
     {
-        print(previousYRotation - yRotation);
         return (Math.Abs(previousXRotation - xRotation) > 0.1f || previousYRotation - yRotation > 0.0f);
     }
 
