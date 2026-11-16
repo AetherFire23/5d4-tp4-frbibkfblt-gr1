@@ -30,7 +30,92 @@ public class NoclipPlayerController : MonoBehaviour
     // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
+    }
 
+    private void OnLanding()
+    {
+    }
+
+    private void OnStartFlying()
+    {
+        _animator.SetBool("flying", true);
+        _animator.SetBool("gliding", false);
+        print("Should be flying, not gliding");
+        _wingsActive = true; // should be in StartFlying
+        if (_isOnGround)
+        {
+            _animator.SetInteger("hop", 1);
+            _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f),
+                ForceMode.Impulse); // small jump to kickstart flight
+            StartCoroutine(nameof(ResetHopInt), 1);
+        }
+    }
+
+    private void OnStartGliding()
+    {
+    }
+
+    private void OnStopFlying()
+    {
+        if (!_isOnGround)
+        {
+            _animator.SetBool("gliding", true);
+        }
+
+        _animator.SetBool("flying", false);
+        _wingsActive = false;
+    }
+
+    private void OnStopGliding()
+    {
+    }
+
+    private void OnStartLanding()
+    {
+        _animator.SetBool("landing", true);
+        Perch();
+    }
+
+    private void OnStopLanding()
+    {
+        _isPerching = false;
+    }
+
+    private void OnLaunch()
+    {
+    }
+
+    private void OnFlying()
+    {
+        _staticFlightDirections.Add(transform.up);
+    }
+
+    private void OnGliding()
+    {
+    }
+
+    private void OnStartStationaryFlight()
+    {
+        _stationaryFlightActive = true;
+        _rb.useGravity = false;
+        _rb.linearDamping = 0.95f; // slow down a lot
+        _animator.SetBool("flying", true);
+        _animator.SetBool("gliding", false);
+        _animator.speed = 0.10f;
+    }
+
+    private void OnStopStationaryFlight()
+    {
+        _stationaryFlightActive = false;
+        _rb.useGravity = true;
+        _rb.linearDamping = 0.00f; // stop slowing down
+        _animator.SetBool("flying", false);
+        _animator.SetBool("gliding", true);
+        _animator.speed = 0.75f;
+    }
+
+    private void OnStationaryFlight()
+    {
     }
 
     private void Awake()
@@ -63,88 +148,23 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void HandleInput()
     {
-        if (Input.GetButtonDown("Jump"))
-        {
-            _animator.SetBool("flying", true);
-            _animator.SetBool("gliding", false);
-            print("Should be flying, not gliding");
-            _wingsActive = true;
-            if (_isOnGround)
-            {
-                _animator.SetInteger("hop", 1);
-                _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f),
-                    ForceMode.Impulse); // small jump to kickstart flight
-                StartCoroutine(nameof(ResetHopInt), 1);
-            }
-        }
+        // events
+        if (Input.GetButtonDown("Jump")) OnStartFlying(); 
+        if (Input.GetButtonUp("Jump")) OnStopFlying();
+        if (Input.GetKeyDown(KeyCode.LeftShift)) OnStartStationaryFlight();
+        if (Input.GetKeyUp(KeyCode.LeftShift)) OnStopStationaryFlight();
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround) OnStartLanding();
+        if (Input.GetKeyUp(KeyCode.LeftControl)) OnStopLanding();
+        if (_wingsActive) OnFlying();
 
-        if (Input.GetButtonUp("Jump"))
-        {
-            if (!_isOnGround)
-            {
-                _animator.SetBool("gliding", true);
-            }
-            _animator.SetBool("flying", false);
-            _wingsActive = false;
-        }
+        // static flight directions
+        if (Input.GetKey(KeyCode.W)) _staticFlightDirections.Add(transform.forward);
+        if (Input.GetKey(KeyCode.A)) _staticFlightDirections.Add(-transform.right);
+        if (Input.GetKey(KeyCode.S)) _staticFlightDirections.Add(-transform.forward);
+        if (Input.GetKey(KeyCode.D)) _staticFlightDirections.Add(transform.right);
 
-        if (Input.GetKeyDown(KeyCode.LeftShift))
-        {
-            _stationaryFlightActive = true;
-            _rb.useGravity = false;
-            _rb.linearDamping = 0.95f; // slow down a lot
-            _animator.SetBool("flying", true);
-            _animator.SetBool("gliding", false);
-            _animator.speed = 0.10f;
-        }
 
-        if (Input.GetKeyUp(KeyCode.LeftShift))
-        {
-            _stationaryFlightActive = false;
-            _rb.useGravity = true;
-            _rb.linearDamping = 0.00f; // stop slowing down
-            _animator.SetBool("flying", false);
-            _animator.SetBool("gliding", true);
-            _animator.speed = 0.75f;
-        }
-
-        if (Input.GetKey(KeyCode.W))
-        {
-            _staticFlightDirections.Add(transform.forward);
-        }
-
-        if (Input.GetKey(KeyCode.A))
-        {
-            _staticFlightDirections.Add(-transform.right);
-        }
-
-        if (Input.GetKey(KeyCode.S))
-        {
-            _staticFlightDirections.Add(-transform.forward);
-        }
-
-        if (Input.GetKey(KeyCode.D))
-        {
-            _staticFlightDirections.Add(transform.right);
-        }
-
-        if (_wingsActive) // go up if flying
-        {
-            _staticFlightDirections.Add(transform.up);
-        }
-
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround)
-        {
-            _animator.SetBool("landing", true);
-            Perch();
-        }
-
-        if (Input.GetKeyUp(KeyCode.LeftControl))
-        {
-            _isPerching = false;
-        }
-
-}
+    }
 
     void ResetHopInt()
     {
@@ -162,14 +182,14 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _animator.SetBool("landing", false);
             _isPerching = false;
-            _rb.constraints = RigidbodyConstraints.FreezePositionX  | RigidbodyConstraints.FreezePositionZ;
+            _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
         }
         else
         {
             _rb.constraints = RigidbodyConstraints.None;
         }
 
-        
+
         if (IsFlyingWithWings())
         {
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
@@ -181,7 +201,6 @@ public class NoclipPlayerController : MonoBehaviour
             {
                 _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
             }
-
         }
 
         if (IsFreeFlying())
@@ -205,7 +224,7 @@ public class NoclipPlayerController : MonoBehaviour
 
     private bool IsFreeFlying()
     {
-        return !_isOnGround &&  !_stationaryFlightActive;
+        return !_isOnGround && !_stationaryFlightActive;
     }
 
     /// <summary>
@@ -214,11 +233,15 @@ public class NoclipPlayerController : MonoBehaviour
     private void ApplyTorque()
     {
         // slow down bird in direction of velocity
-        _rb.AddForce(Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * (torque * Time.deltaTime) / 4, Math.Abs(_rb.linearVelocity.x)),
+        _rb.AddForce(
+            Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * (torque * Time.deltaTime) / 4,
+                Math.Abs(_rb.linearVelocity.x)),
             ForceMode.Force);
-        
+
         // speed up bird in forward direction
-        _rb.AddForce(Vector3.Lerp(Vector3.zero, transform.forward * (torque * 5 * Time.deltaTime), Math.Abs(_rb.linearVelocity.x)),
+        _rb.AddForce(
+            Vector3.Lerp(Vector3.zero, transform.forward * (torque * 5 * Time.deltaTime),
+                Math.Abs(_rb.linearVelocity.x)),
             ForceMode.Force);
     }
 
