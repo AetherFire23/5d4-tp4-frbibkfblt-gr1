@@ -4,12 +4,13 @@ using UnityEngine;
 
 public class NoclipPlayerController : MonoBehaviour
 {
-    public float maxForwardSpeed = 100f;
-    public float wingForce = 10f;
-    public float upBias = 0.5f;
-    public float forwardBias = 1f;
+    public float maxForwardSpeed = 500;
+    public float wingForce = 6700f;
+    public float upBias = 0.6f;
+    public float forwardBias = 0.7f;
     public float torque = 10000f;
-    public float xCameraLock = 0.2f;
+    public float xCameraLock = 0.0f;
+    public float baseLinearDamping = 0.05f;
 
     private float _speed;
     private bool _isOnGround;
@@ -31,7 +32,7 @@ public class NoclipPlayerController : MonoBehaviour
         _animator.SetBool("gliding", false);
         _animator.SetBool("flying", false);
         _animator.SetBool("landing", false);
-        
+
         // physics
         _isOnGround = true;
         _isLanding = false;
@@ -46,7 +47,7 @@ public class NoclipPlayerController : MonoBehaviour
     {
         _animator.SetBool("flying", true);
         _animator.SetBool("gliding", false);
-        print("Should be flying, not gliding");
+        torque /= 5;
         _wingsActive = true; // should be in StartFlying
         if (_isOnGround)
         {
@@ -70,6 +71,7 @@ public class NoclipPlayerController : MonoBehaviour
 
         _animator.SetBool("flying", false);
         _wingsActive = false;
+        torque *= 5;
     }
 
     private void OnStopGliding()
@@ -96,7 +98,7 @@ public class NoclipPlayerController : MonoBehaviour
     private void OnLaunch()
     {
         _isOnGround = false;
-        _rb.linearDamping = 0.0f;
+        _rb.linearDamping = baseLinearDamping;
         _rb.mass = 10;
         _rb.useGravity = true;
         _rb.constraints = RigidbodyConstraints.None;
@@ -109,8 +111,9 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void OnGliding()
     {
+        _rb.maxLinearVelocity *= 1.2f;
     }
-    
+
     void OnCollisionEnter(Collision collision)
     {
         if (collision.gameObject.CompareTag("Ground")) OnLand();
@@ -135,7 +138,7 @@ public class NoclipPlayerController : MonoBehaviour
     {
         _stationaryFlightActive = false;
         _rb.useGravity = true;
-        _rb.linearDamping = 0.00f; // stop slowing down
+        _rb.linearDamping = baseLinearDamping; // stop slowing down
         _animator.SetBool("flying", false);
         _animator.SetBool("gliding", true);
         _animator.speed = 0.75f;
@@ -144,7 +147,7 @@ public class NoclipPlayerController : MonoBehaviour
     private void OnStationaryFlight()
     {
     }
-    
+
     void ResetHopInt()
     {
         _animator.SetInteger("hop", 0);
@@ -159,7 +162,7 @@ public class NoclipPlayerController : MonoBehaviour
         _rb.maxAngularVelocity = maxForwardSpeed;
         _animator.speed = 0.75f;
     }
-    
+
     void Update()
     {
         float mouseX = Input.GetAxis("Mouse X") * 5;
@@ -175,13 +178,14 @@ public class NoclipPlayerController : MonoBehaviour
     private void HandleInput()
     {
         // events
-        if (Input.GetButtonDown("Jump")) OnStartFlying(); 
+        if (Input.GetButtonDown("Jump")) OnStartFlying();
         if (Input.GetButtonUp("Jump")) OnStopFlying();
         if (Input.GetKeyDown(KeyCode.LeftShift)) OnStartStationaryFlight();
         if (Input.GetKeyUp(KeyCode.LeftShift)) OnStopStationaryFlight();
         if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround) OnStartLanding();
         if (Input.GetKeyUp(KeyCode.LeftControl)) OnStopLanding();
         if (_wingsActive) OnFlying();
+        else if (!_isOnGround) OnGliding();
 
         // static flight directions
         if (Input.GetKey(KeyCode.W)) _staticFlightDirections.Add(transform.forward);
@@ -189,7 +193,7 @@ public class NoclipPlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.S)) _staticFlightDirections.Add(-transform.forward);
         if (Input.GetKey(KeyCode.D)) _staticFlightDirections.Add(transform.right);
     }
-    
+
     // beware code reviewer, lies below physics code to be reviewed with care. In case of brain aneuryism, call 911 
     void FixedUpdate()
     {
@@ -201,7 +205,7 @@ public class NoclipPlayerController : MonoBehaviour
         if (IsFlyingWithWings())
         {
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
-            _rb.AddForce(Vector3.up * (upBias * wingForce * Time.deltaTime), ForceMode.Force);
+            _rb.AddForce(Vector3.up * (upBias * wingForce/2 * Time.deltaTime), ForceMode.Force);
         }
         else if (IsStationaryFlightActive())
         {
@@ -237,24 +241,23 @@ public class NoclipPlayerController : MonoBehaviour
     /// </summary>
     private void ApplyTorque()
     {
+        float maxClamp = 1;
         // slow down bird in direction of velocity
-        _rb.AddForce(
-            Vector3.Lerp(Vector3.zero, -_rb.linearVelocity * (torque * Time.deltaTime) / 4,
-                Math.Abs(_rb.linearVelocity.x)),
-            ForceMode.Force);
+        _rb.AddForce(-_rb.linearVelocity * (torque *Mathf.Clamp(0.2f, 0.7f, yRotation/10) / 8 * Time.deltaTime * 
+                                            Mathf.Clamp(Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 2f, 4f)
+                                            ), ForceMode.Force);
 
         // speed up bird in forward direction
-        _rb.AddForce(
-            Vector3.Lerp(Vector3.zero, transform.forward * (torque * 5 * Time.deltaTime),
-                Math.Abs(_rb.linearVelocity.x)),
-            ForceMode.Force);
+        _rb.AddForce(transform.forward * (torque*Mathf.Clamp(0.2f, 0.7f, yRotation/10) * Time.deltaTime  * 8 * 
+                                          Mathf.Clamp(Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 0, 1f)
+                                          ),ForceMode.Force);
     }
 
     private void ApplyAllForces(IEnumerable<Vector3> directions)
     {
-        foreach (var staticFlightDirection in _staticFlightDirections)
+        foreach (var staticFlightDirection in directions)
         {
             _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
         }
-    }             
+    }
 }
