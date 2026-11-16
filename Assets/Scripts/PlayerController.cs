@@ -1,10 +1,6 @@
 using System;
 using System.Collections.Generic;
-using Unity.Collections;
-using Unity.VisualScripting;
-using UnityEditor;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class NoclipPlayerController : MonoBehaviour
 {
@@ -22,18 +18,28 @@ public class NoclipPlayerController : MonoBehaviour
     private HashSet<Vector3> _staticFlightDirections = new HashSet<Vector3>();
     private Vector3 _previousFacingDirection = Vector3.zero;
     private Animator _animator;
-    private bool _isPerching = false;
+    private bool _isLanding = false;
     private Vector3 perchPoint = Vector3.zero;
+    private float xRotation = 0f;
+    private float yRotation = 0f;
 
     private Rigidbody _rb;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    private void OnLand()
     {
-    }
-
-    private void OnLanding()
-    {
+        // animations
+        _animator.SetBool("gliding", false);
+        _animator.SetBool("flying", false);
+        _animator.SetBool("landing", false);
+        
+        // physics
+        _isOnGround = true;
+        _isLanding = false;
+        _rb.linearDamping = 0.5f;
+        _rb.linearVelocity /= 10;
+        _rb.mass = 25;
+        _rb.useGravity = false;
+        _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
     }
 
     private void OnStartFlying()
@@ -72,17 +78,28 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void OnStartLanding()
     {
-        _animator.SetBool("landing", true);
-        Perch();
+        RaycastHit hit;
+        Physics.Raycast(transform.position, -transform.up, out hit);
+        if (hit.distance < 15f)
+        {
+            _animator.SetBool("landing", true);
+            _isLanding = true;
+            perchPoint = hit.point;
+        }
     }
 
     private void OnStopLanding()
     {
-        _isPerching = false;
+        _isLanding = false;
     }
 
     private void OnLaunch()
     {
+        _isOnGround = false;
+        _rb.linearDamping = 0.0f;
+        _rb.mass = 10;
+        _rb.useGravity = true;
+        _rb.constraints = RigidbodyConstraints.None;
     }
 
     private void OnFlying()
@@ -93,6 +110,16 @@ public class NoclipPlayerController : MonoBehaviour
     private void OnGliding()
     {
     }
+    
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground")) OnLand();
+    }
+
+    void OnCollisionExit(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground")) OnLaunch();
+    }
 
     private void OnStartStationaryFlight()
     {
@@ -101,7 +128,7 @@ public class NoclipPlayerController : MonoBehaviour
         _rb.linearDamping = 0.95f; // slow down a lot
         _animator.SetBool("flying", true);
         _animator.SetBool("gliding", false);
-        _animator.speed = 0.10f;
+        _animator.speed = 0.50f;
     }
 
     private void OnStopStationaryFlight()
@@ -117,6 +144,11 @@ public class NoclipPlayerController : MonoBehaviour
     private void OnStationaryFlight()
     {
     }
+    
+    void ResetHopInt()
+    {
+        _animator.SetInteger("hop", 0);
+    }
 
     private void Awake()
     {
@@ -125,13 +157,9 @@ public class NoclipPlayerController : MonoBehaviour
         _animator = GetComponent<Animator>();
         _rb.maxLinearVelocity = maxForwardSpeed;
         _rb.maxAngularVelocity = maxForwardSpeed;
+        _animator.speed = 0.75f;
     }
-
-    private float xRotation = 0f;
-
-    private float yRotation = 0f;
-
-    // Update is called once per frame
+    
     void Update()
     {
         float mouseX = Input.GetAxis("Mouse X") * 5;
@@ -139,8 +167,6 @@ public class NoclipPlayerController : MonoBehaviour
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
         yRotation = Mathf.Clamp(yRotation, -100f, 70f);
-        _animator.speed = 0.75f;
-
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
 
         HandleInput();
@@ -162,33 +188,15 @@ public class NoclipPlayerController : MonoBehaviour
         if (Input.GetKey(KeyCode.A)) _staticFlightDirections.Add(-transform.right);
         if (Input.GetKey(KeyCode.S)) _staticFlightDirections.Add(-transform.forward);
         if (Input.GetKey(KeyCode.D)) _staticFlightDirections.Add(transform.right);
-
-
     }
-
-    void ResetHopInt()
-    {
-        _animator.SetInteger("hop", 0);
-    }
-
+    
+    // beware code reviewer, lies below physics code to be reviewed with care. In case of brain aneuryism, call 911 
     void FixedUpdate()
     {
-        if (_isPerching)
+        if (_isLanding)
         {
             transform.position = Vector3.MoveTowards(transform.position, perchPoint, 10 * Time.deltaTime);
         }
-
-        if (_isOnGround)
-        {
-            _animator.SetBool("landing", false);
-            _isPerching = false;
-            _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
-        }
-        else
-        {
-            _rb.constraints = RigidbodyConstraints.None;
-        }
-
 
         if (IsFlyingWithWings())
         {
@@ -197,10 +205,7 @@ public class NoclipPlayerController : MonoBehaviour
         }
         else if (IsStationaryFlightActive())
         {
-            foreach (var staticFlightDirection in _staticFlightDirections)
-            {
-                _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
-            }
+            ApplyAllForces(_staticFlightDirections);
         }
 
         if (IsFreeFlying())
@@ -245,40 +250,11 @@ public class NoclipPlayerController : MonoBehaviour
             ForceMode.Force);
     }
 
-    void OnCollisionEnter(Collision collision)
+    private void ApplyAllForces(IEnumerable<Vector3> directions)
     {
-        if (collision.gameObject.CompareTag("Ground"))
+        foreach (var staticFlightDirection in _staticFlightDirections)
         {
-            _animator.SetBool("gliding", false);
-            _animator.SetBool("flying", false);
-            // _animator.SetBool("landing", true);
-            _isOnGround = true;
-            _rb.linearDamping = 0.5f;
-            _rb.linearVelocity /= 10;
-            _rb.mass = 25;
-            _rb.useGravity = false;
+            _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
         }
-    }
-
-    void OnCollisionExit(Collision collision)
-    {
-        if (collision.gameObject.CompareTag("Ground"))
-        {
-            _isOnGround = false;
-            _rb.linearDamping = 0.0f;
-            _rb.mass = 10;
-            _rb.useGravity = true;
-        }
-    }
-
-    void Perch()
-    {
-        RaycastHit hit;
-        Physics.Raycast(transform.position, -transform.up, out hit);
-        if (hit.distance < 15f)
-        {
-            _isPerching = true;
-            perchPoint = hit.point;
-        }
-    }
+    }             
 }
