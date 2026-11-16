@@ -23,6 +23,8 @@ public class NoclipPlayerController : MonoBehaviour
     private Vector3 perchPoint = Vector3.zero;
     private float xRotation = 0f;
     private float yRotation = 0f;
+    private float previousXRotation = 0f;
+    private float previousYRotation = 0f;
 
     private Rigidbody _rb;
 
@@ -205,7 +207,7 @@ public class NoclipPlayerController : MonoBehaviour
         if (IsFlyingWithWings())
         {
             _rb.AddRelativeForce(Vector3.forward * (forwardBias * wingForce * Time.deltaTime), ForceMode.Force);
-            _rb.AddForce(Vector3.up * (upBias * wingForce/2 * Time.deltaTime), ForceMode.Force);
+            _rb.AddForce(Vector3.up * (upBias * wingForce / 2 * Time.deltaTime), ForceMode.Force);
         }
         else if (IsStationaryFlightActive())
         {
@@ -219,6 +221,8 @@ public class NoclipPlayerController : MonoBehaviour
 
         _previousFacingDirection = transform.forward;
         _staticFlightDirections.Clear();
+        previousXRotation = xRotation;
+        previousYRotation = yRotation;
     }
 
     private bool IsFlyingWithWings()
@@ -236,21 +240,31 @@ public class NoclipPlayerController : MonoBehaviour
         return !_isOnGround && !_stationaryFlightActive;
     }
 
+    private bool IsTurning()
+    {
+        print(previousYRotation - yRotation);
+        return (Math.Abs(previousXRotation - xRotation) > 0.1f || previousYRotation - yRotation > 0.0f);
+    }
+
     /// <summary>
     /// Allows the bird able to turn even when wings are inactive
     /// </summary>
     private void ApplyTorque()
     {
-        float maxClamp = 1;
+        float slowdownMultiplier = IsTurning() ? 1.25f : 0.350f;
         // slow down bird in direction of velocity
-        _rb.AddForce(-_rb.linearVelocity * (torque *Mathf.Clamp(0.2f, 0.7f, yRotation/10) / 8 * Time.deltaTime * 
-                                            Mathf.Clamp(Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 2f, 4f)
-                                            ), ForceMode.Force);
+        _rb.AddForce(-_rb.linearVelocity * (torque / 8 * slowdownMultiplier * Time.deltaTime *
+                                            Mathf.Clamp(
+                                                Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity)
+                                                    .x), 0f, 1f)
+            ), ForceMode.Force);
 
         // speed up bird in forward direction
-        _rb.AddForce(transform.forward * (torque*Mathf.Clamp(0.2f, 0.7f, yRotation/10) * Time.deltaTime  * 8 * 
-                                          Mathf.Clamp(Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 0, 1f)
-                                          ),ForceMode.Force);
+        _rb.AddForce(transform.forward * (torque * 2.5f *slowdownMultiplier * Time.deltaTime *
+                                          Mathf.Clamp(
+                                              Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 0,
+                                              1f)
+            ), ForceMode.Force);
     }
 
     private void ApplyAllForces(IEnumerable<Vector3> directions)

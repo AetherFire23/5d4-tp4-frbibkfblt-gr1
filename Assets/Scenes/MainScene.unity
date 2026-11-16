@@ -4767,13 +4767,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f4df4ae5c0ca17946a6e16672ddc55cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxForwardSpeed: 500
-  wingForce: 6700
+  maxForwardSpeed: 600
+  wingForce: 9000
   upBias: 0.75
   forwardBias: 0.6
-  torque: 1800
+  torque: 4200
   xCameraLock: 0
-  baseLinearDamping: 0.05
+  baseLinearDamping: 0
 --- !u!65 &1015973624
 BoxCollider:
   m_ObjectHideFlags: 0
