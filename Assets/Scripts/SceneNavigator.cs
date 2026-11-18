@@ -15,7 +15,7 @@ public class SceneNavigator : MonoBehaviour
 
     public static void StartGame()
     {
-        SceneManager.LoadScene("Scenes/MainMenu");
+        SceneManager.LoadScene("Scenes/MainScene");
     }
 
     public static void ExitApp()
