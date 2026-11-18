@@ -2,8 +2,10 @@
 
 namespace Knight.Pure
 {
+    
     public class KnightState
     {
+
         public int Health { get; set; } = 3;
 
         public KnightAffliction Hunger { get; set; } = new(KnightAfflictionTypes.Hunger);

@@ -1,56 +1,44 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
 public class BirdInventory : MonoBehaviour
 {
-    HashSet<GameObject> gameobjects = new HashSet<GameObject>();
+    private FoodManager grabbedItem;
+    [SerializeField] private float itemPickupRadius;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-    }
-
-    public void OnTriggerEnter(Collider collider)
-    {
-        Debug.Log("added");
-        if (collider.gameObject.CompareTag("GoodFood") || collider.gameObject.CompareTag("GoodFood"))
-        {
-            this.gameobjects.Add(collider.gameObject);
-        }
-    }
-
-    public void OnTriggerExit(Collider collider)
-    {
-        Debug.Log("Removed");
-        if (collider.gameObject.CompareTag("BadFood") || collider.gameObject.CompareTag("GoodFood"))
-        {
-            this.gameobjects.Remove(collider.gameObject);
-        }
-    }
-
-    private GameObject holding;
-
-    // Update is called once per frame
     void Update()
     {
-        if (Input.GetKeyDown(KeyCode.E))
+        bool mustGrab = Input.GetKeyDown(KeyCode.E) && grabbedItem is null;
+        bool mustDropItem = Input.GetKeyDown(KeyCode.E) && grabbedItem is not null;
+        if (mustGrab)
         {
-            if (this.gameobjects.Count > 0)
+            Collider? foodHitWithinRadius = Physics.OverlapSphere(this.transform.position, itemPickupRadius)
+                .Where(x => x.GetComponent<FoodManager>() is not null)
+                .OrderBy(x => Vector3.Distance(x.transform.position, this.transform.position))
+                .FirstOrDefault();
+
+            if (foodHitWithinRadius is null)
             {
-                Debug.Log("Inside!");
-                GameObject go = this.gameobjects.ElementAt(0);
-                this.holding = go;
-                FoodManager foodManager = go.GetComponent<FoodManager>();
-                foodManager.AttachItem(this.transform);
+                return;
             }
+
+            grabbedItem = foodHitWithinRadius.GetComponent<FoodManager>();
+            grabbedItem.AttachItem(this.transform);
+        }
+        else if (mustDropItem)
+        {
+           StopGrabbing();
+        }
+    }
+
+    public void StopGrabbing()
+    {
+        if (grabbedItem is null)
+        {
+            return;
         }
 
-        if (Input.GetKeyUp(KeyCode.F))
-        {
-            FoodManager foodManager = holding.GetComponent<FoodManager>();
-            foodManager.DetachItem();
-        }
+        grabbedItem.DetachItem();
+        grabbedItem = null;
     }
 }

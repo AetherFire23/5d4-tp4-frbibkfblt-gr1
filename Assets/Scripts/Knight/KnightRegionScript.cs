@@ -1,31 +1,28 @@
-using Knight;
 using Knight.Pure;
 using UnityEngine;
 
 public class KnightRegionScript : MonoBehaviour
 {
-    private KnightState knight;
+    public KnightState Knight { get; set; } = new KnightState();
+    private BirdInventory birdInventory;
 
     public void Awake()
     {
-        this.knight = new KnightState();
+        birdInventory = FindAnyObjectByType<BirdInventory>();
     }
 
     public void OnCollisionEnter(Collision collision)
     {
-        bool isGoodFood = collision.gameObject.tag == "Reagent";
-        // if (isGoodFood)
-        // {
-        //     this.knight.ReceiveGoodFood();
-        // }
-        // else
-        // {
-        //     this.knight.ReceiveBadFood();
-        // }
-        //
-        // if (this.knight.IsDead)
-        // {
-        //     // TODO: Gameover, show panel to go back 
-        // }
+        FoodManager? foodManager = collision.gameObject.GetComponent<FoodManager>();
+        if (foodManager is null)
+        {
+            return;
+        }
+        
+        this.birdInventory.StopGrabbing();
+
+        Knight.ReceiveReagent(foodManager.Reagent);
+
+        Destroy(foodManager.gameObject);
     }
 }

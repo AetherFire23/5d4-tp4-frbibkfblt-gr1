@@ -12,10 +12,4 @@ public class ItemSpotManager : MonoBehaviour
         SpawnedItem = spawnableItems[Random.Range(0, spawnableItems.Length)];
         Instantiate(SpawnedItem,this.gameObject.transform.position,this.gameObject.transform.rotation);
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
