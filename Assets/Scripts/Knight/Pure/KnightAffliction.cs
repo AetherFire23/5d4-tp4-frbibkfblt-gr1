@@ -26,6 +26,7 @@ namespace Knight.Pure
             private set
             {
                 _isCured = value;
+                // inform the UI that this has changed baby 
                 OnUpdated?.Invoke(this, new KnightAfflictionUpdatedEvent(this.KnightAfflictionType, this.IsCured));
             }
         }

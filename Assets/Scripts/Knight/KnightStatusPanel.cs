@@ -45,7 +45,6 @@ public class KnightStatusPanel : MonoBehaviour
 
     public void OnSetAffliction(object source, KnightAfflictionUpdatedEvent e)
     {
-        Debug.Log("Afflictio updated!");
         Image afflictionImg = e.Affliction switch
         {
             KnightAfflictionTypes.Curse => this.curse,
