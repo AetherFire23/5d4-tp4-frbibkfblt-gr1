@@ -24,6 +24,7 @@ public class BirdInventory : MonoBehaviour
 
             if (foodHitWithinRadius is null)
             {
+                print("BLA");
                 return;
             }
 
