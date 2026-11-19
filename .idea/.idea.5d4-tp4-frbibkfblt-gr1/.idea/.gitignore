@@ -2,8 +2,8 @@
 /shelf/
 /workspace.xml
 # Rider ignored files
-/.idea.5d4-tp4-frbibkfblt-gr1.iml
 /contentModel.xml
+/.idea.5d4-tp4-frbibkfblt-gr1.iml
 /modules.xml
 /projectSettingsUpdater.xml
 # Editor-based HTTP Client requests
