@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -6,6 +8,9 @@ public class BirdInventory : MonoBehaviour
     private FoodManager grabbedItem;
     [SerializeField] private float itemPickupRadius;
 
+    private GameObject holding;
+
+    // Update is called once per frame
     void Update()
     {
         bool mustGrab = Input.GetKeyDown(KeyCode.E) && grabbedItem is null;
@@ -40,5 +45,11 @@ public class BirdInventory : MonoBehaviour
 
         grabbedItem.DetachItem();
         grabbedItem = null;
+    }
+    
+    public void DropItem()
+    {
+        FoodManager foodManager = holding.GetComponent<FoodManager>();
+        foodManager.DetachItem();
     }
 }
