@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -9,6 +10,7 @@ namespace UI_Scripts
         public GameObject settingsPanel;
         public GameObject mainPanel;
         public Slider volumeSlider;
+        public float fadeDuration = 0.25f;
 
         void Start()
         {
@@ -33,14 +35,45 @@ namespace UI_Scripts
 
         public void OpenSettings()
         {
-            mainPanel.SetActive(false);
-            settingsPanel.SetActive(true);
+            StartCoroutine(SwitchPanels(mainPanel, settingsPanel));
         }
 
         public void CloseSettings()
         {
-            settingsPanel.SetActive(false);
-            mainPanel.SetActive(true);
+            StartCoroutine(SwitchPanels(settingsPanel, mainPanel));
+        }
+
+        IEnumerator SwitchPanels(GameObject from, GameObject to)
+        {
+            CanvasGroup fromGroup = from.GetComponent<CanvasGroup>();
+            CanvasGroup toGroup = to.GetComponent<CanvasGroup>();
+
+            fromGroup.interactable = false;
+            toGroup.interactable = false;
+
+            yield return Fade(fromGroup, 0f);
+            from.SetActive(false);
+
+            toGroup.alpha = 0f;
+            to.SetActive(true);
+            yield return Fade(toGroup, 1f);
+
+            toGroup.interactable = true;
+        }
+
+        IEnumerator Fade(CanvasGroup group, float target)
+        {
+            float start = group.alpha;
+            float time = 0f;
+
+            while (time < fadeDuration)
+            {
+                time += Time.unscaledDeltaTime;
+                group.alpha = Mathf.Lerp(start, target, time / fadeDuration);
+                yield return null;
+            }
+
+            group.alpha = target;
         }
 
         public void Quit()
