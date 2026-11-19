@@ -1,4 +1,5 @@
 using NUnit.Framework;
+using SaveSystem;
 using UnityEngine;
 
 public class ItemSpotManager : MonoBehaviour
@@ -10,6 +11,7 @@ public class ItemSpotManager : MonoBehaviour
     void Start()
     {
         SpawnedItem = spawnableItems[Random.Range(0, spawnableItems.Length)];
+        Persistance.Register(SpawnedItem.GetComponent<FoodManager>());
         Instantiate(SpawnedItem,this.gameObject.transform.position,this.gameObject.transform.rotation);
     }
 }

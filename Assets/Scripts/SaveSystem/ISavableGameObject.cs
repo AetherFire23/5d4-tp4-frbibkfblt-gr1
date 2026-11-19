@@ -6,6 +6,7 @@ namespace SaveSystem
     public interface ISavableGameObject
     {
         public ObjectData GetObjectData();
-        public GameObject BuildFromObjectData(ObjectData objectData);
+        public void BuildFromObjectData(ObjectData objectData);
+        GameObject GetGameObject();
     }
 }

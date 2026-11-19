@@ -7,18 +7,23 @@ using Object = System.Object;
 
 namespace SaveSystem
 {
-    public class GameLoader : MonoBehaviour
+    public class GameLoader
     {
         public void Load(Dictionary<string, GameObject> prototypes)
         {
-            String jsonString = File.ReadAllText(Path.Combine(Application.persistentDataPath, "gameObjectData.json"));
-            List<ObjectData> objectDatas = JsonUtility.FromJson<List<ObjectData>>(jsonString);
-            foreach (ObjectData o in objectDatas)
+            String jsonString = File.ReadAllText(Path.Combine(Application.persistentDataPath, "save.json"));
+            AllObjectData objectDatas = JsonUtility.FromJson<AllObjectData>(jsonString);
+            foreach (ObjectData o in objectDatas.objectDatas)
             {
                 GameObject matchingPrototype = prototypes[o.Id];
                 ISavableGameObject savableObject = matchingPrototype.GetComponent<ISavableGameObject>();
                 savableObject.BuildFromObjectData(o);
             }
+        }
+
+        public bool SaveExists()
+        {
+            return File.Exists(Path.Combine(Application.persistentDataPath, "save.json"));
         }
     }
 }

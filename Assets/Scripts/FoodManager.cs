@@ -1,9 +1,10 @@
 using System;
 using System.Collections.Generic;
 using Knight.Pure;
+using SaveSystem;
 using UnityEngine;
 
-public class FoodManager : MonoBehaviour
+public class FoodManager : MonoBehaviour, ISavableGameObject
 {
     private Rigidbody rb;
     private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0, 0.0f);
@@ -46,6 +47,28 @@ public class FoodManager : MonoBehaviour
         transform.Translate(DROP_HIGHER, Space.World);
         GetComponent<Collider>().enabled = true;
         transform.localScale *= sizeMultiplier;
+    }
+
+    public ObjectData GetObjectData()
+    {
+        return new ObjectData(
+            transform.position,
+            transform.rotation.eulerAngles,
+            transform.localScale,
+            name
+        );
+    }
+
+    public void BuildFromObjectData(ObjectData objectData)
+    {
+        this.transform.position = objectData.Position;
+        this.transform.rotation = new Quaternion(objectData.Rotation.x, objectData.Rotation.y, objectData.Rotation.z, 0);
+        this.transform.localScale = objectData.Scale;
+    }
+
+    public GameObject GetGameObject()
+    {
+        return gameObject;
     }
 }
 
