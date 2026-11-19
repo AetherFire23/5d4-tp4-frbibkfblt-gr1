@@ -166,6 +166,7 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void Awake()
     {
+        Persistance.RegisterUnique(this);
         Cursor.lockState = CursorLockMode.Locked;
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();

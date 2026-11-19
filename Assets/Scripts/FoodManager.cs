@@ -59,13 +59,6 @@ public class FoodManager : MonoBehaviour, ISavableGameObject
         );
     }
 
-    public void BuildFromObjectData(ObjectData objectData)
-    {
-        this.transform.position = objectData.Position;
-        this.transform.rotation = new Quaternion(objectData.Rotation.x, objectData.Rotation.y, objectData.Rotation.z, 0);
-        this.transform.localScale = objectData.Scale;
-    }
-
     public GameObject GetGameObject()
     {
         return gameObject;

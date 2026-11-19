@@ -29,5 +29,12 @@ namespace SaveSystem
         {
             
         }
+
+        public ObjectData(Transform transform)
+        {
+            Position = transform.position;
+            Rotation = transform.eulerAngles;
+            Scale = transform.localScale;
+        }
     }
 }

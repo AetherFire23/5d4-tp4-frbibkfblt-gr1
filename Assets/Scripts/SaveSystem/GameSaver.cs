@@ -9,15 +9,10 @@ namespace SaveSystem
 {
     public class GameSaver
     {
-        public void SaveAll(List<ISavableGameObject> saveableObjects)
+        public void SaveAll(List<ObjectData> saveableObjects)
         {
-            List<ObjectData> objectData = new List<ObjectData>();
-            foreach (ISavableGameObject saveableObject in saveableObjects)
-            {
-                objectData.Add(saveableObject.GetObjectData());
-            }
             AllObjectData datum = new AllObjectData();
-            datum.SetObjectDatas(objectData);
+            datum.SetObjectDatas(saveableObjects);
             string saveData = JsonConvert.SerializeObject(datum, Formatting.None, new JsonSerializerSettings
             {
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
