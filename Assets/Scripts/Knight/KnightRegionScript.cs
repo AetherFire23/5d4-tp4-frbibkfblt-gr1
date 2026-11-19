@@ -8,7 +8,13 @@ public class KnightRegionScript : MonoBehaviour
 
     public void Awake()
     {
+        this.Knight.TriggerOnKnightDeath += (state) => {Debug.unityLogger.Log(state.ToString()); };
         birdInventory = FindAnyObjectByType<BirdInventory>();
+    }
+
+    private void OnKNightDeath(KnightState knightState)
+    {
+        
     }
 
     public void OnCollisionEnter(Collision collision)

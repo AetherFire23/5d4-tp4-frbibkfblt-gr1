@@ -1158,6 +1158,14 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: cures.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: 'cures.Array.data[1]'
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 2587155019263177295, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
       propertyPath: m_Name
       value: mushrooms (1)
@@ -5085,6 +5093,22 @@ PrefabInstance:
       propertyPath: name
       value: Mushroom
       objectReference: {fileID: 0}
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: cures.Array.size
+      value: 4
+      objectReference: {fileID: 0}
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: 'cures.Array.data[1]'
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: 'cures.Array.data[2]'
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: -453872027399137144, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
+      propertyPath: 'cures.Array.data[3]'
+      value: 3
+      objectReference: {fileID: 0}
     - target: {fileID: 2587155019263177295, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
       propertyPath: m_Name
       value: mushrooms (2)
@@ -5095,11 +5119,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2759770153517807620, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 13.231106
+      value: 13.23
       objectReference: {fileID: 0}
     - target: {fileID: 2759770153517807620, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 2821.2524
+      value: 2813.52
       objectReference: {fileID: 0}
     - target: {fileID: 2759770153517807620, guid: 7bbda70823ef74f42968d377d403ebc9, type: 3}
       propertyPath: m_LocalRotation.w
