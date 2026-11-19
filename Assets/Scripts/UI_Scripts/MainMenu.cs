@@ -1,4 +1,5 @@
 using System.Collections;
+using SaveSystem;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,7 +15,7 @@ namespace UI_Scripts
 
         void Start()
         {
-            continueButton.SetActive(SaveSystem.SaveExists());
+            continueButton.SetActive(Persistance.SaveExists());
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
 
@@ -24,8 +25,8 @@ namespace UI_Scripts
 
         public void Continue()
         {
-            //somethingThatManagesGameState.loadSave = true;
             SceneNavigator.StartGame();
+            Persistance.Load();
         }
 
         public void NewGame()

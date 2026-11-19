@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using SaveSystem;
 using UnityEngine;
 
 public class NoclipPlayerController : MonoBehaviour
@@ -182,6 +183,8 @@ public class NoclipPlayerController : MonoBehaviour
         yRotation -= mouseY;
         yRotation = Mathf.Clamp(yRotation, -100f, 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
+        
+        if (Input.GetKeyDown(KeyCode.F1)) Persistance.Save();
 
         HandleInput();
     }
