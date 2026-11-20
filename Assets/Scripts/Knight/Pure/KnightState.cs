@@ -6,9 +6,11 @@ namespace Knight.Pure
     public class KnightState
     {
         public delegate void OnKnightDeath(KnightState knightState);
+
         public event OnKnightDeath TriggerOnKnightDeath;
 
         public delegate void OnKnightFullyCured(KnightState knightState);
+
         public event OnKnightFullyCured TriggerOnKnightFullyCured;
 
         public int Health { get; set; } = 3;
@@ -27,7 +29,7 @@ namespace Knight.Pure
 
         public void ReceiveReagent(Reagent reagent)
         {
-            if (this.IsFullyCured || this.IsDead)
+            if (IsFullyCured || IsDead)
             {
                 throw new Exception(
                     $"Inconsistent function call. Knight is either fully cured or dead ({IsFullyCured},{IsDead}). ");
@@ -39,15 +41,15 @@ namespace Knight.Pure
             // Can happen when afflictions are Persistent. 
             if (IsAllAfflicted)
             {
-                this.Health--;
+                Health--;
             }
 
-            if (this.IsDead)
+            if (IsDead)
             {
                 TriggerOnKnightDeath?.Invoke(this);
             }
 
-            if (this.IsFullyCured)
+            if (IsFullyCured)
             {
                 TriggerOnKnightFullyCured?.Invoke(this);
             }
