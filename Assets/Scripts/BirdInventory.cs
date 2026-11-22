@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using UnityEngine;
 
@@ -24,7 +22,6 @@ public class BirdInventory : MonoBehaviour
 
             if (foodHitWithinRadius is null)
             {
-                print("BLA");
                 return;
             }
 
@@ -46,11 +43,5 @@ public class BirdInventory : MonoBehaviour
 
         grabbedItem.DetachItem();
         grabbedItem = null;
-    }
-    
-    public void DropItem()
-    {
-        FoodManager foodManager = holding.GetComponent<FoodManager>();
-        foodManager.DetachItem();
     }
 }
