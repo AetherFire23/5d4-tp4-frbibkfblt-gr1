@@ -53,7 +53,7 @@ MonoBehaviour:
     m_Value: {x: 1, y: 1, z: 1, w: 0}
   gamma:
     m_OverrideState: 1
-    m_Value: {x: 0.8530724, y: 0.6477989, z: 1, w: -0.17513134}
+    m_Value: {x: 0.8530724, y: 0.6477989, z: 1, w: -0.24254707}
   gain:
     m_OverrideState: 1
     m_Value: {x: 0.9923722, y: 0.9847445, z: 1, w: -0.19264446}
