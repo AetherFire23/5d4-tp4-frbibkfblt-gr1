@@ -2696,6 +2696,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0cc81fac0756f8843a1cc1af91b8a5e0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  fadeTime: 1.5
+  current: {fileID: 0}
+  other: {fileID: 0}
+  musicVolume: 0
 --- !u!82 &1116495183
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4487,7 +4491,8 @@ PrefabInstance:
       propertyPath: m_ConstrainProportionsScale
       value: 1
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 4950858663157613755, guid: 242b0d0839c80404e80c0f7ce0d9be84, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []
