@@ -1,7 +1,12 @@
 fileFormatVersion: 2
+<<<<<<<< HEAD:Assets/WorldAssets/ModifiedPrefabs/giant forest/Tree_02.prefab.meta
+guid: 7adc70bc789c2d04ebc23f8009bfc607
+PrefabImporter:
+========
 guid: 1dbc565a5d54d9d49afb50db1d9e5f45
 folderAsset: yes
 DefaultImporter:
+>>>>>>>> feature/grab-cleanup:Assets/WorldAssets/Icons.meta
   externalObjects: {}
   userData: 
   assetBundleName: 

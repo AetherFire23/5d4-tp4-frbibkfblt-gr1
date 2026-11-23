@@ -1,10 +1,17 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Knight.Pure
 {
-    
     public class KnightState
     {
+        public delegate void OnKnightDeath(KnightState knightState);
+
+        public event OnKnightDeath TriggerOnKnightDeath;
+
+        public delegate void OnKnightFullyCured(KnightState knightState);
+
+        public event OnKnightFullyCured TriggerOnKnightFullyCured;
 
         public int Health { get; set; } = 3;
 
@@ -22,13 +29,29 @@ namespace Knight.Pure
 
         public void ReceiveReagent(Reagent reagent)
         {
+            if (IsFullyCured || IsDead)
+            {
+                throw new Exception(
+                    $"Inconsistent function call. Knight is either fully cured or dead ({IsFullyCured},{IsDead}). ");
+            }
+
             reagent.ApplyEffect(this);
 
             // Lose health every time you give a reagent to the knight, but he still has all afflictions uncured. 
             // Can happen when afflictions are Persistent. 
             if (IsAllAfflicted)
             {
-                this.Health--;
+                Health--;
+            }
+
+            if (IsDead)
+            {
+                TriggerOnKnightDeath?.Invoke(this);
+            }
+
+            if (IsFullyCured)
+            {
+                TriggerOnKnightFullyCured?.Invoke(this);
             }
         }
     }
