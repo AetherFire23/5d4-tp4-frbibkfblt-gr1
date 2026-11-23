@@ -15,7 +15,7 @@ namespace UI_Scripts
 
         void Start()
         {
-            continueButton.SetActive(Persistance.SaveExists());
+            continueButton.SetActive(Persistance.SaveExists("save1"));
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
 
@@ -26,7 +26,8 @@ namespace UI_Scripts
         public void Continue()
         {
             SceneNavigator.StartGame();
-            Persistance.Load();
+            SceneLoadedListener.saveName = "save1";
+            SceneLoadedListener.loadFromSave = true;
         }
 
         public void NewGame()

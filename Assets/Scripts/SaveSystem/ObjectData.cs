@@ -13,8 +13,8 @@ namespace SaveSystem
     {
         public Vector3 Position;
         public Vector3 Rotation;
-        public Vector3 Scale;
-        [CanBeNull] public string Id;
+        public Vector3 Scale; 
+        public string Id;
 
 
         public ObjectData(Vector3 position, Vector3 rotation, Vector3 scale, string objectId)

@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using NUnit.Framework;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityPipeline.Microsoft.CodeAnalysis.Operations;
 
 namespace SaveSystem
 {
@@ -10,9 +12,10 @@ namespace SaveSystem
     {
         private GameSaver _gameSaver;
         private GameLoader _gameLoader;
-        private List<ObjectData> uniques = new List<ObjectData>();
-        private Dictionary<string, AbstractPrototypeFactory> prototypeIdToPrototypeFactory = new();
-        private Dictionary<string, List<ObjectData>> prototypeIdToPrototypeData = new();
+        private List<ObjectData> foodItems = new List<ObjectData>();
+        private ObjectData playerData;
+        private FoodItemFactory foodItemFactory;
+        private GameObject player;
 
         public static Persistance Instance = new(
             new GameLoader(),
@@ -25,47 +28,57 @@ namespace SaveSystem
             _gameSaver = gameSaver;
         }
 
-        public static void RegisterUnique(IUniqueObject go)
+        public static void RegisterFoodItem(ObjectData foodItemData)
         {
-            if (go == null) return;
-            Instance.uniques.Add(go.GetObjectData());
-        }
-        
-        public static void RegisterPrototypeFactory(AbstractPrototypeFactory abstractPrototypeFactory)
-        {
-            Instance.prototypeIdToPrototypeFactory.Add(abstractPrototypeFactory.GetProtoId(), abstractPrototypeFactory);
-        }
-        
-        public static void RegisterPrototype(ISavableGameObject go)
-        {
-            if (!Instance.prototypeIdToPrototypeData.ContainsKey(go.GetObjectData().Id))
-                Instance.prototypeIdToPrototypeData.Add(go.GetObjectData().Id, new List<ObjectData>());
-            
-            Instance.prototypeIdToPrototypeData[go.GetObjectData().Id].Add(go.GetObjectData());
+            Instance.foodItems.Add(foodItemData);
         }
 
-        public static void Save()
+        public static void RegisterPlayerData(ObjectData playerData)
         {
-            Debug.Log("Saved game");
-            Instance._gameSaver.SaveAll(Instance.prototypeIdToPrototypeData.Values.Flatten(s ).ToList());
+            Instance.playerData = playerData;
         }
 
-        public static void Load()
+        public static void RegisterPlayer(GameObject gameObject)
         {
-            // todo fetch ObjectData
-            
-            foreach (KeyValuePair<string, ObjectData> idToProto in Instance.prototypeIdToPrototypeData)
-            {
-                AbstractPrototypeFactory abstractPrototypeFactory = Instance.prototypeIdToPrototypeFactory[idToProto.Key]; // get factory for prototype
-                abstractPrototypeFactory.Create(idToProto.Value); // generate
-            }
+            Instance.player = gameObject;
         }
 
-        public static bool SaveExists()
+        // ReSharper disable Unity.PerformanceAnalysis
+        public static void Save(string saveDir)
         {
-            return Instance._gameLoader.SaveExists();
+            Instance._gameSaver.SavePlayer(Instance.playerData, saveDir);
+            Instance._gameSaver.SaveFoodItems(Instance.foodItems, saveDir);
         }
 
+        public static void Load(string saveName)
+        {
+            List<ObjectData> foodItems = Instance._gameLoader.GetItemsFromSave(saveName);
+            ObjectData newPlayerData = Instance._gameLoader.GetPlayerDataFromSave(saveName);
 
+            Instance.foodItemFactory.CreateAllFromSave(foodItems);
+            SetPlayerData(newPlayerData);
+        }
+
+        private static void SetPlayerData(ObjectData objectData)
+        {
+            Instance.player.transform.position = objectData.Position;
+            Instance.player.transform.rotation = Quaternion.Euler(objectData.Rotation);
+            Instance.player.transform.localScale = objectData.Scale;
+        }
+
+        public static void SetFoodItemFactory(FoodItemFactory foodItemFactory)
+        {
+            Instance.foodItemFactory = foodItemFactory;
+        }
+
+        public static bool SaveExists(string saveName)
+        {
+            return Instance._gameLoader.SaveExists(saveName);
+        }
+
+        public static void ClearFoodItems()
+        {
+            Instance.foodItems.Clear();
+        }
     }
 }
