@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using SaveSystem;
+using UI_Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -40,14 +41,7 @@ public class SceneLoadedListener : MonoBehaviour
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            Persistance.ClearFoodItems();
-            foreach (var foodManager in FindObjectsByType<FoodManager>(FindObjectsSortMode.None))
-            {
-                Persistance.RegisterFoodItem(foodManager.GetObjectData());
-                Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
-            }
-            Persistance.Save("save1");
-
+            FindAnyObjectByType<PauseMenu>().SaveGame();
         }
 
     }

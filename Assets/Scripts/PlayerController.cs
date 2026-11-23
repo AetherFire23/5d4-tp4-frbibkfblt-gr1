@@ -185,11 +185,6 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         yRotation = Mathf.Clamp(yRotation, -100f, 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
         
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-
-        }
-
         HandleInput();
     }
 
