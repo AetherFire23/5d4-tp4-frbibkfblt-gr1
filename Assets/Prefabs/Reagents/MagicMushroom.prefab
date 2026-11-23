@@ -160,7 +160,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   name: Magic Mushroom
   cures: 
-  inflicts: 
+  inflicts: 02000000
   prevents: 
   persists: 
   sizeMultiplier: 1.2

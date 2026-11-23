@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Garlic Bottle
-  cures: 
+  cures: 02000000
   inflicts: 
   prevents: 
   persists: 

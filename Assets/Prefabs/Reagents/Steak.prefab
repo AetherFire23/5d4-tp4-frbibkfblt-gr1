@@ -125,9 +125,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Steak
-  cures: 
+  cures: 00000000
   inflicts: 
-  prevents: 
+  prevents: 00000000
   persists: 
   sizeMultiplier: 1.2
 --- !u!65 &-4642630147957199455

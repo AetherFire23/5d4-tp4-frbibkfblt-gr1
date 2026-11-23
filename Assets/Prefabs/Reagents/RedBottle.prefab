@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Red Bottle
-  cures: 
+  cures: 01000000
   inflicts: 
   prevents: 
   persists: 

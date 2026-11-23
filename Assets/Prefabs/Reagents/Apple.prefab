@@ -125,7 +125,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   name: Apple
-  cures: 
+  cures: 00000000
   inflicts: 
   prevents: 
   persists: 
