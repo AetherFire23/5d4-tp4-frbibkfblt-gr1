@@ -9,6 +9,7 @@ public class KnightRegionScript : MonoBehaviour
     public void Awake()
     {
         birdInventory = FindAnyObjectByType<BirdInventory>();
+        Knight.TriggerOnKnightFullyCured += (state) => Debug.Log("Cured");
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -18,7 +19,7 @@ public class KnightRegionScript : MonoBehaviour
         {
             return;
         }
-        
+
         this.birdInventory.StopGrabbing();
 
         Knight.ReceiveReagent(foodManager.Reagent);

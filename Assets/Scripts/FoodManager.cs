@@ -7,8 +7,8 @@ using UnityEngine;
 public class FoodManager : MonoBehaviour
 {
     private Rigidbody rb;
-    private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0, 0.0f);
-    private Vector3 DROP_HIGHER = new Vector3(0, 1, 0);
+    private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0.0f, 0.9f);
+    private Vector3 DROP_HIGHER = new Vector3(0.0f, 1.0f, 0.0f);
 
     [SerializeField] private string name;
     [SerializeField] private List<KnightAfflictionTypes> cures;
@@ -47,6 +47,7 @@ public class FoodManager : MonoBehaviour
         transform.SetParent(null);
         rb.constraints = RigidbodyConstraints.None;
         transform.Translate(DROP_HIGHER, Space.World);
+        
         GetComponent<Collider>().enabled = true;
         transform.localScale *= sizeMultiplier;
     }

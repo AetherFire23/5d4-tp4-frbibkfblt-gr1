@@ -21,6 +21,8 @@ namespace UI_Scripts
 
             volumeSlider.value = MusicController.Instance.Volume;
             volumeSlider.onValueChanged.AddListener(MusicController.Instance.SetVolume);
+            Cursor.lockState = CursorLockMode.None;
+            Cursor.visible = true;
         }
 
         public void Continue()
@@ -37,46 +39,14 @@ namespace UI_Scripts
 
         public void OpenSettings()
         {
-            StartCoroutine(SwitchPanels(mainPanel, settingsPanel));
+            StartCoroutine(MenuFadeHelper.SwitchPanels(mainPanel, settingsPanel));
         }
 
         public void CloseSettings()
         {
-            StartCoroutine(SwitchPanels(settingsPanel, mainPanel));
+            StartCoroutine(MenuFadeHelper.SwitchPanels(settingsPanel, mainPanel));
         }
 
-        IEnumerator SwitchPanels(GameObject from, GameObject to)
-        {
-            CanvasGroup fromGroup = from.GetComponent<CanvasGroup>();
-            CanvasGroup toGroup = to.GetComponent<CanvasGroup>();
-
-            fromGroup.interactable = false;
-            toGroup.interactable = false;
-
-            yield return Fade(fromGroup, 0f);
-            from.SetActive(false);
-
-            toGroup.alpha = 0f;
-            to.SetActive(true);
-            yield return Fade(toGroup, 1f);
-
-            toGroup.interactable = true;
-        }
-
-        IEnumerator Fade(CanvasGroup group, float target)
-        {
-            float start = group.alpha;
-            float time = 0f;
-
-            while (time < fadeDuration)
-            {
-                time += Time.unscaledDeltaTime;
-                group.alpha = Mathf.Lerp(start, target, time / fadeDuration);
-                yield return null;
-            }
-
-            group.alpha = target;
-        }
 
         public void Quit()
         {
