@@ -1,4 +1,7 @@
+using System.Collections;
+using SaveSystem;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace UI_Scripts
 {
@@ -7,20 +10,26 @@ namespace UI_Scripts
         public GameObject continueButton;
         public GameObject settingsPanel;
         public GameObject mainPanel;
+        public Slider volumeSlider;
+        public float fadeDuration = 0.25f;
 
         void Start()
         {
-            continueButton.SetActive(SaveSystem.SaveExists());
+            continueButton.SetActive(Persistance.SaveExists("save1"));
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
+
+            volumeSlider.value = MusicController.Instance.Volume;
+            volumeSlider.onValueChanged.AddListener(MusicController.Instance.SetVolume);
             Cursor.lockState = CursorLockMode.None;
             Cursor.visible = true;
         }
 
         public void Continue()
         {
-            //somethingThatManagesGameState.loadSave = true;
             SceneNavigator.StartGame();
+            SceneLoadedListener.saveName = "save1";
+            SceneLoadedListener.loadFromSave = true;
         }
 
         public void NewGame()

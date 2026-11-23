@@ -1,4 +1,5 @@
 using System;
+using SaveSystem;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
@@ -58,7 +59,14 @@ namespace UI_Scripts
 
         public void SaveGame()
         {
-            SaveSystem.SaveGame();
+            Persistance.ClearFoodItems();
+            foreach (var foodManager in FindObjectsByType<FoodManager>(FindObjectsSortMode.None))
+            {
+                Persistance.RegisterFoodItem(foodManager.GetObjectData());
+                Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
+            }
+
+            Persistance.Save("save1");
         }
 
         public void ReturnToMenu()

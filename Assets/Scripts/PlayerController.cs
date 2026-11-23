@@ -1,8 +1,9 @@
 using System;
 using System.Collections.Generic;
+using SaveSystem;
 using UnityEngine;
 
-public class NoclipPlayerController : MonoBehaviour
+public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 {
     public float maxForwardSpeed = 500;
     public float wingForce = 6700f;
@@ -165,6 +166,7 @@ public class NoclipPlayerController : MonoBehaviour
 
     private void Awake()
     {
+        Persistance.RegisterPlayer(this.gameObject);
         Cursor.lockState = CursorLockMode.Locked;
         _rb = GetComponent<Rigidbody>();
         _animator = GetComponent<Animator>();
@@ -182,6 +184,11 @@ public class NoclipPlayerController : MonoBehaviour
         yRotation -= mouseY;
         yRotation = Mathf.Clamp(yRotation, -100f, 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
+        
+        if (Input.GetKeyDown(KeyCode.F1))
+        {
+
+        }
 
         HandleInput();
     }
@@ -281,5 +288,29 @@ public class NoclipPlayerController : MonoBehaviour
         {
             _rb.AddForce(staticFlightDirection * (Time.deltaTime * wingForce) / 2, ForceMode.Force);
         }
+    }
+
+    private class PlayerObjectData: ObjectData
+    {
+        public bool isOnGround;
+        public PlayerObjectData(Transform transform, bool isOnGround) : base(transform)
+        {
+            this.isOnGround = isOnGround;
+            Id = "Player";
+        }
+    }
+
+    public ObjectData GetObjectData()
+    {
+        return new PlayerObjectData(transform, _isOnGround);
+    }
+
+    public void BuildFromObjectData(ObjectData objectData)
+    {
+        PlayerObjectData playerObjectData = objectData as PlayerObjectData;
+        transform.position = objectData.Position;
+        transform.rotation = new Quaternion(objectData.Rotation.x, objectData.Rotation.y, objectData.Rotation.z, 0);
+        transform.localScale = objectData.Scale;
+        _isOnGround = playerObjectData.isOnGround;
     }
 }
