@@ -182,7 +182,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
-        yRotation = Mathf.Clamp(yRotation, _isOnGround ? -40 : -100f, _isOnGround ? 10 : 70f);
+        yRotation = Mathf.Clamp(yRotation, _isOnGround ? -35 : -100f, _isOnGround ? 10 : 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
         HandleInput();
     }
