@@ -124,7 +124,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         if (_rb.linearVelocity.magnitude > 15f)
         {
             print("drop");
-            _birdInventory.DropItem();
+            _birdInventory.StopGrabbing();
         }
 
         if (collision.gameObject.CompareTag("Ground")) OnLand();

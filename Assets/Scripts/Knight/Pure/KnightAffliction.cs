@@ -2,34 +2,15 @@
 
 namespace Knight.Pure
 {
-    public class KnightAfflictionUpdatedEvent
-    {
-        public KnightAfflictionTypes Affliction { get; private set; }
-        public bool IsCured { get; private set; }
-
-        public KnightAfflictionUpdatedEvent(KnightAfflictionTypes affliction, bool isCured)
-        {
-            Affliction = affliction;
-            IsCured = isCured;
-        }
-    }
-
     public class KnightAffliction
     {
-        public event EventHandler<KnightAfflictionUpdatedEvent> OnUpdated;
+        public delegate void KnightAfflictionUpdated(KnightAffliction affliction);
+
+        public event KnightAfflictionUpdated TriggerOnUpdated;
         private bool _isCured;
         public KnightAfflictionTypes KnightAfflictionType { get; private set; }
 
-        public bool IsCured
-        {
-            get => _isCured;
-            private set
-            {
-                _isCured = value;
-                // inform the UI that this has changed baby 
-                OnUpdated?.Invoke(this, new KnightAfflictionUpdatedEvent(this.KnightAfflictionType, this.IsCured));
-            }
-        }
+        public bool IsCured { get; set; }
 
         /**
          * The Affliction is Prevented from being inflicted this curse. The next Infliction does not apply.
@@ -54,10 +35,13 @@ namespace Knight.Pure
             if (IsPersistent)
             {
                 IsPersistent = false;
+                TriggerOnUpdated?.Invoke(this);
                 return;
             }
 
             IsCured = true;
+
+            TriggerOnUpdated?.Invoke(this);
         }
 
         /**
@@ -68,20 +52,24 @@ namespace Knight.Pure
             if (IsPrevented)
             {
                 this.IsPrevented = false;
+                TriggerOnUpdated?.Invoke(this);
                 return;
             }
 
             IsCured = false;
+            TriggerOnUpdated?.Invoke(this);
         }
 
         public void Prevent()
         {
             this.IsPrevented = true;
+            TriggerOnUpdated?.Invoke(this);
         }
 
         public void Persist()
         {
             this.IsPersistent = true;
+            TriggerOnUpdated?.Invoke(this);
         }
     }
 }
