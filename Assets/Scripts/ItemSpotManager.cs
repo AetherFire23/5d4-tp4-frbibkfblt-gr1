@@ -1,45 +1,38 @@
+using System;
 using NUnit.Framework;
 using SaveSystem;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 
-
-public class ItemSpotManager : MonoBehaviour, IUniqueObject, IPrototypeObjectFactory
+public class ItemSpotManager: MonoBehaviour
 {
-    private class ItemSpotManagerGameData: ObjectData
+    private class ItemSpotManagerGameData : ObjectData
     {
-        public bool hasGenerated;
+        public int itemGeneratedIndex;
 
-        public ItemSpotManagerGameData(Transform transform, bool hasGenerated) : base(transform)
+        public ItemSpotManagerGameData(Transform transform, int itemGeneratedIndex, string id) : base(transform)
         {
-            this.hasGenerated = hasGenerated;
+            this.itemGeneratedIndex = itemGeneratedIndex;
+            Id = id;
         }
     }
+
     public GameObject[] spawnableItems;
     private GameObject SpawnedItem;
-    private bool hasGenerated = false;
+    private int itemGeneratedIndex = -1;
 
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
+    public void Create()
     {
-        Persistance.RegisterUnique(this);
-        hasGenerated = true;
+        if (spawnableItems == null) return;
+        InstantiateFoodFromIndex(Random.Range(0, spawnableItems.Length), transform.position, Quaternion.identity);
     }
 
-    public ObjectData GetObjectData()
+    private void InstantiateFoodFromIndex(int index, Vector3 position, Quaternion rotation)
     {
-        return new ItemSpotManagerGameData(transform, hasGenerated);
+        itemGeneratedIndex = index;
+        SpawnedItem = spawnableItems[itemGeneratedIndex];
+        Instantiate(SpawnedItem, position, rotation);
     }
-
-    public void BuildFromObjectData(ObjectData objectData)
-    {
-        hasGenerated = ((ItemSpotManagerGameData) objectData).hasGenerated;
-    }
-
-    public void InstanciateFromObjectData(ObjectData objectData)
-    {
-        SpawnedItem = spawnableItems[Random.Range(0, spawnableItems.Length)];
-        Persistance.RegisterPrototype(SpawnedItem.GetComponent<FoodManager>());
-        Instantiate(SpawnedItem,this.gameObject.transform.position,this.gameObject.transform.rotation);
-    }
+    
 }

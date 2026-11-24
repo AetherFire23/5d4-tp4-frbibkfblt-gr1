@@ -9,7 +9,18 @@ namespace SaveSystem
 {
     public class GameSaver
     {
-        public void SaveAll(List<ObjectData> saveableObjects)
+        public void SavePlayer(ObjectData objectData, string saveDir)
+        {
+            List<ObjectData> objectDatas = new List<ObjectData> { objectData };
+            SaveAll(objectDatas, saveDir, "player.json");
+        }
+        
+        public void SaveFoodItems(List<ObjectData> objects, string saveDir)
+        {
+            SaveAll(objects, saveDir, "food_items.json");
+        }
+        
+        private void SaveAll(List<ObjectData> saveableObjects, string saveDir, string saveName)
         {
             AllObjectData datum = new AllObjectData();
             datum.SetObjectDatas(saveableObjects);
@@ -18,7 +29,10 @@ namespace SaveSystem
                 PreserveReferencesHandling = PreserveReferencesHandling.None,
                 ReferenceLoopHandling = ReferenceLoopHandling.Ignore,
             });            
-            File.WriteAllText(Path.Combine(Application.persistentDataPath, "save.json"), saveData);
+            
+            if (!Directory.Exists(Path.Combine(Application.persistentDataPath, saveDir)))
+                Directory.CreateDirectory(Path.Combine(Application.persistentDataPath, saveDir));
+            File.WriteAllText(Path.Combine(Application.persistentDataPath, saveDir, saveName), saveData);
         }
     }
 }

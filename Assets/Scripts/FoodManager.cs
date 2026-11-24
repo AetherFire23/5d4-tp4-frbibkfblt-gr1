@@ -4,7 +4,7 @@ using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
 
-public class FoodManager : MonoBehaviour, ISavableGameObject
+public class FoodManager : MonoBehaviour
 {
     private Rigidbody rb;
     private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0, 0.0f);
@@ -18,10 +18,12 @@ public class FoodManager : MonoBehaviour, ISavableGameObject
 
     public Reagent Reagent;
     public float sizeMultiplier = 1.2f;
+    [NonSerialized] public string Id; 
 
     private void Awake()
     {
         this.Reagent = new Reagent(this.name, cures, inflicts, prevents, persists);
+        Id = gameObject.name;
     }
 
     void Start()
@@ -51,17 +53,41 @@ public class FoodManager : MonoBehaviour, ISavableGameObject
 
     public ObjectData GetObjectData()
     {
-        return new ObjectData(
-            transform.position,
-            transform.rotation.eulerAngles,
-            transform.localScale,
-            name
+        return new FoodObjectData(
+            transform,
+            cures,
+            inflicts,
+            prevents,
+            persists,
+            name,
+            Id
         );
     }
 
-    public GameObject GetGameObject()
+    public class FoodObjectData: ObjectData
     {
-        return gameObject;
+        public string name;
+        public List<KnightAfflictionTypes> cures;
+        public List<KnightAfflictionTypes> inflicts;
+        public List<KnightAfflictionTypes> prevents;
+        public List<KnightAfflictionTypes> persists;
+
+        public FoodObjectData(Transform transform, 
+            List<KnightAfflictionTypes> cures,
+            List<KnightAfflictionTypes> inflicts,
+            List<KnightAfflictionTypes> prevents,
+            List<KnightAfflictionTypes> persists,
+            string name,
+            string id
+            ) : base(transform)
+        {
+            this.cures = cures;
+            this.inflicts = inflicts;
+            this.prevents = prevents;
+            this.persists = persists;
+            this.name = name;
+            Id = id;
+        }
     }
 }
 
