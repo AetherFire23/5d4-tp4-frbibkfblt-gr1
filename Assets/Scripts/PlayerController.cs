@@ -182,14 +182,8 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
-        yRotation = Mathf.Clamp(yRotation, -100f, 70f);
+        yRotation = Mathf.Clamp(yRotation, _isOnGround ? -35 : -100f, _isOnGround ? 10 : 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
-        
-        if (Input.GetKeyDown(KeyCode.F1))
-        {
-
-        }
-
         HandleInput();
     }
 
@@ -275,7 +269,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
             ), ForceMode.Force);
 
         // speed up bird in forward direction
-        _rb.AddForce(transform.forward * (torque * 2.5f *slowdownMultiplier * Time.deltaTime *
+        _rb.AddForce(transform.forward * (torque * 2.5f * slowdownMultiplier * Time.deltaTime *
                                           Mathf.Clamp(
                                               Mathf.Abs(transform.InverseTransformDirection(_rb.linearVelocity).x), 0,
                                               1f)
@@ -290,9 +284,10 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         }
     }
 
-    private class PlayerObjectData: ObjectData
+    private class PlayerObjectData : ObjectData
     {
         public bool isOnGround;
+
         public PlayerObjectData(Transform transform, bool isOnGround) : base(transform)
         {
             this.isOnGround = isOnGround;
