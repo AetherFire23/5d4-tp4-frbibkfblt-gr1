@@ -44,7 +44,6 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _rb.linearVelocity /= 10;
         _rb.mass = 25;
         _rb.useGravity = false;
-        _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
     }
 
     private void OnStartFlying()
@@ -52,13 +51,18 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _animator.SetBool("flying", true);
         _animator.SetBool("gliding", false);
         torque /= 5;
-        _wingsActive = true; // should be in StartFlying
         if (_isOnGround)
         {
             _animator.SetInteger("hop", 1);
-            _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f),
+            _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 0.5f),
                 ForceMode.Impulse); // small jump to kickstart flight
-            StartCoroutine(nameof(ResetHopInt), 1);
+            _rb.AddForce(transform.forward * (wingForce * Time.deltaTime * 1f),
+                ForceMode.Impulse); // small jump to kickstart flight
+            StartCoroutine(nameof(ResetHopInt), 2);
+        }
+        else
+        {
+            _wingsActive = true;
         }
     }
 
@@ -162,6 +166,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     void ResetHopInt()
     {
         _animator.SetInteger("hop", 0);
+        _wingsActive = true; 
     }
 
     private void Awake()
