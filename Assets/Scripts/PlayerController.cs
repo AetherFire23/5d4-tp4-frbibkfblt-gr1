@@ -35,8 +35,9 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     {
         // animations
         _animator.SetBool("gliding", false);
-        _animator.SetBool("flying", false);
+        _animator.SetBool("flying", _wingsActive);
         _animator.SetBool("landing", false);
+        _birdTrailController.StopTrail();
 
         // physics
         _isOnGround = true;
@@ -45,10 +46,12 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _rb.linearVelocity /= 10;
         _rb.mass = 25;
         _rb.useGravity = false;
+        _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY;
     }
 
     private void OnStartFlying()
     {
+        _rb.constraints = RigidbodyConstraints.None;
         _animator.SetBool("flying", true);
         _animator.SetBool("gliding", false);
         torque /= 5;
