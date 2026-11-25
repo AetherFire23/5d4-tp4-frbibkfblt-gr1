@@ -18046,7 +18046,7 @@ MonoBehaviour:
   wingForce: 10000
   upBias: 0.75
   forwardBias: 0.6
-  torque: 4200
+  torque: 6000
   xCameraLock: 0
   baseLinearDamping: 0.05
 --- !u!65 &1015973625
