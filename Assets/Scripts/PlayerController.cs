@@ -27,6 +27,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     private float previousXRotation = 0f;
     private float previousYRotation = 0f;
     private BirdInventory _birdInventory;
+    private BirdTrailController _birdTrailController;
 
     private Rigidbody _rb;
 
@@ -68,6 +69,8 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnStartGliding()
     {
+        _rb.maxLinearVelocity *= 2;
+        _birdTrailController.Trail();
     }
 
     private void OnStopFlying()
@@ -84,6 +87,8 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnStopGliding()
     {
+        _rb.maxLinearVelocity = maxForwardSpeed;
+        _birdTrailController.StopTrail();
     }
 
     private void OnStartLanding()
@@ -119,7 +124,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnGliding()
     {
-        _rb.maxLinearVelocity *= 1.2f;
+        _birdTrailController.SetTrailTime(Vector3.Dot(_rb.linearVelocity, transform.forward)/10);
     }
 
     void OnCollisionEnter(Collision collision)
@@ -179,6 +184,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _rb.maxAngularVelocity = maxForwardSpeed;
         _animator.speed = 0.75f;
         _birdInventory = GetComponent<BirdInventory>();
+        _birdTrailController = GetComponent<BirdTrailController>();
     }
 
     void Update()
@@ -198,11 +204,30 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     private void HandleInput()
     {
         // events
-        if (Input.GetButtonDown("Jump")) OnStartFlying();
-        if (Input.GetButtonUp("Jump")) OnStopFlying();
-        if (Input.GetKeyDown(KeyCode.LeftShift)) OnStartStationaryFlight();
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (!IsOnGroundOrNear())
+            {
+                OnStopGliding();
+            }
+            OnStartFlying();
+        }
+        if (Input.GetButtonUp("Jump"))
+        {
+            if (!IsOnGroundOrNear()) OnStartGliding();
+            OnStopFlying();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            OnStopGliding();
+            OnStartStationaryFlight();
+        }
         if (Input.GetKeyUp(KeyCode.LeftShift)) OnStopStationaryFlight();
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround) OnStartLanding();
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround)
+        {
+            OnStopGliding();
+            OnStartLanding();
+        }
         if (Input.GetKeyUp(KeyCode.LeftControl)) OnStopLanding();
         if (_wingsActive) OnFlying();
         else if (!_isOnGround) OnGliding();
@@ -312,7 +337,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     {
         RaycastHit hit;
         Physics.Raycast(transform.position, Vector3.down, out hit);
-        if (hit.distance < 1f)
+        if (hit.distance < 0.3f)
         {
             return true;
         }
