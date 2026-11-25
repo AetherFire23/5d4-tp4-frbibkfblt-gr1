@@ -57,16 +57,16 @@ namespace UI_Scripts
             StartCoroutine(MenuFadeHelper.SwitchPanels(sourcePanel, targetPanel));
         }
 
-        public void SaveGame()
+        public static void SaveGame()
         {
             Persistance.ClearFoodItems();
             foreach (var foodManager in FindObjectsByType<FoodManager>(FindObjectsSortMode.None))
             {
                 Persistance.RegisterFoodItem(foodManager.GetObjectData());
                 Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
+      
             }
-
-            Persistance.Save("save1");
+            Persistance.Save(SceneLoadedListener.saveName);
         }
 
         public void ReturnToMenu()

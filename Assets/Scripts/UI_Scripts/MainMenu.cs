@@ -28,13 +28,14 @@ namespace UI_Scripts
         public void Continue()
         {
             SceneNavigator.StartGame();
-            SceneLoadedListener.saveName = "save1";
             SceneLoadedListener.loadFromSave = true;
+            SceneLoadedListener.saveName = "save1";
         }
 
         public void NewGame()
         {
             SceneNavigator.StartGame();
+            SceneLoadedListener.loadFromSave = false;
         }
 
         public void OpenSettings()

@@ -47,7 +47,6 @@ public class FoodManager : MonoBehaviour
         transform.SetParent(null);
         rb.constraints = RigidbodyConstraints.None;
         transform.Translate(DROP_HIGHER, Space.World);
-        
         GetComponent<Collider>().enabled = true;
         transform.localScale *= sizeMultiplier;
     }

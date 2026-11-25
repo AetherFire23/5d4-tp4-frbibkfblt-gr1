@@ -3,7 +3,7 @@ using UnityEngine.SceneManagement;
 
 public class KnightSceneLoader : MonoBehaviour
 {
-    void Start()
+    void Awake()
     {
         Scene knightScene = SceneManager.GetSceneByName("KnightScene");
 
@@ -14,6 +14,8 @@ public class KnightSceneLoader : MonoBehaviour
         else
         {
             SceneManager.LoadScene("KnightScene", LoadSceneMode.Additive);
+            
+   
         }
     }
 

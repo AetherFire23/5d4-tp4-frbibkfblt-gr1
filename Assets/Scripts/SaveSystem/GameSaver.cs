@@ -1,7 +1,5 @@
-using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using Newtonsoft.Json;
 using UnityEngine;
 
@@ -33,6 +31,11 @@ namespace SaveSystem
             if (!Directory.Exists(Path.Combine(Application.persistentDataPath, saveDir)))
                 Directory.CreateDirectory(Path.Combine(Application.persistentDataPath, saveDir));
             File.WriteAllText(Path.Combine(Application.persistentDataPath, saveDir, saveName), saveData);
+        }
+
+        public void SaveKnightStatus(List<ObjectData>  objectDatas, string saveDir)
+        {
+            SaveAll(objectDatas, saveDir, "knight_status.json");
         }
     }
 }

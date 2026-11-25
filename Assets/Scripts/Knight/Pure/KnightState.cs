@@ -1,20 +1,20 @@
 ﻿using System;
 using System.Collections.Generic;
-
 namespace Knight.Pure
 {
+    [Serializable]
     public class KnightState
     {
         public delegate void OnKnightDeath(KnightState knightState);
 
         public event OnKnightDeath TriggerOnKnightDeath;
-
+       
         public delegate void OnKnightFullyCured(KnightState knightState);
 
+     
         public event OnKnightFullyCured TriggerOnKnightFullyCured;
 
         public int Health { get; set; } = 3;
-
         public KnightAffliction Hunger { get; set; } = new(KnightAfflictionTypes.Hunger);
         public KnightAffliction Poison { get; set; } = new(KnightAfflictionTypes.Poison);
         public KnightAffliction Bleeding { get; set; } = new(KnightAfflictionTypes.Bleeding);
@@ -26,6 +26,7 @@ namespace Knight.Pure
         public bool IsFullyCured => Afflictions.TrueForAll(x => x.IsCured);
         public bool IsAllAfflicted => Afflictions.TrueForAll(x => !x.IsCured);
         public bool IsDead => Health == 0;
+
 
         public void ReceiveReagent(Reagent reagent)
         {
@@ -52,6 +53,14 @@ namespace Knight.Pure
             if (IsFullyCured)
             {
                 TriggerOnKnightFullyCured?.Invoke(this);
+            }
+        }
+        
+        public void Refresh()
+        {
+            foreach (var knightAffliction in this.Afflictions)
+            {
+                knightAffliction.Refresh();
             }
         }
     }

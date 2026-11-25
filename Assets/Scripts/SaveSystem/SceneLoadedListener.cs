@@ -6,8 +6,11 @@ using UnityEngine.SceneManagement;
 
 public class SceneLoadedListener : MonoBehaviour
 {
+    public const string DEFAULT_NEW_SAVE_GAME_NAME = "save1";
     public static bool loadFromSave = false;
-    public static string saveName = null;
+    public static string saveName = DEFAULT_NEW_SAVE_GAME_NAME;
+
+    public bool IsKnightSceneLoaded { get; set; } = false;
 
     private void OnEnable()
     {
@@ -19,9 +22,19 @@ public class SceneLoadedListener : MonoBehaviour
         SceneManager.sceneLoaded -= OnSceneLoaded;
     }
 
-    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    public void OnSceneLoaded(Scene scene, LoadSceneMode mode)
     {
-        Debug.Log($"Loaded: {scene.name}");
+        Debug.Log("Scene: " + scene.name);
+        LoadData();
+    }
+
+    public void LoadData()
+    {
+        if (!this.IsKnightSceneLoaded)
+        {
+            return;
+        }
+
         if (loadFromSave)
         {
             Persistance.SetFoodItemFactory(GetComponent<FoodItemFactory>());
@@ -34,16 +47,13 @@ public class SceneLoadedListener : MonoBehaviour
                 itemSpotManager.Create();
             }
         }
-
     }
 
     void Update()
     {
         if (Input.GetKeyDown(KeyCode.F1))
         {
-            FindAnyObjectByType<PauseMenu>().SaveGame();
+            PauseMenu.SaveGame();
         }
-
     }
-
 }

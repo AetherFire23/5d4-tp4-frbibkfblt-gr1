@@ -1,15 +1,27 @@
 using Knight.Pure;
+using SaveSystem;
 using UnityEngine;
 
 public class KnightRegionScript : MonoBehaviour
 {
     public KnightState Knight { get; set; } = new KnightState();
+
     private BirdInventory birdInventory;
 
     public void Awake()
     {
+        Persistance.RegisterKnightRegion(this);
+        SceneLoadedListener sceneLoadedLister = FindFirstObjectByType<SceneLoadedListener>();
+        sceneLoadedLister.IsKnightSceneLoaded = true;
+        sceneLoadedLister.LoadData();
         birdInventory = FindAnyObjectByType<BirdInventory>();
         Knight.TriggerOnKnightFullyCured += (state) => Debug.Log("Cured");
+
+        var statusPanel = FindFirstObjectByType<KnightStatusPanel>();
+
+        statusPanel.SubscribeToAfflictionUpdates();
+
+        this.Knight.Refresh();
     }
 
     public void OnCollisionEnter(Collision collision)
