@@ -187,7 +187,10 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
-        yRotation = Mathf.Clamp(yRotation, IsOnGroundOrNear() ? -35 : -100f, IsOnGroundOrNear() ? 10 : 70f);
+
+        bool near = IsOnGroundOrNear();
+        yRotation = Mathf.Clamp(yRotation, near ? -35 : -90f, near ? 10 : 70f);
+        print(yRotation);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
         HandleInput();
     }
@@ -308,7 +311,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     public bool IsOnGroundOrNear()
     {
         RaycastHit hit;
-        Physics.Raycast(transform.position, -transform.up, out hit);
+        Physics.Raycast(transform.position, Vector3.down, out hit);
         if (hit.distance < 1f)
         {
             return true;
