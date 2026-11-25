@@ -10,7 +10,7 @@ namespace UI_Scripts
 
         void Start()
         {
-            continueButton.SetActive(SaveSystem.SaveExists());
+            // continueButton.SetActive(SaveSystem.SaveExists());
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
             Cursor.lockState = CursorLockMode.None;
@@ -19,13 +19,15 @@ namespace UI_Scripts
 
         public void Continue()
         {
-            //somethingThatManagesGameState.loadSave = true;
             SceneNavigator.StartGame();
+            SceneLoadedListener.loadFromSave = true;
+            SceneLoadedListener.saveName = "save1";
         }
 
         public void NewGame()
         {
             SceneNavigator.StartGame();
+            SceneLoadedListener.loadFromSave = false;
         }
 
         public void OpenSettings()
