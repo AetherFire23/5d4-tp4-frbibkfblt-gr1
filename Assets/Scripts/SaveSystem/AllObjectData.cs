@@ -3,13 +3,18 @@
 namespace SaveSystem
 {
     [System.Serializable]
-    public class AllObjectData
+    public class AllObjectData<T> where T : ObjectData
     {
-        public List<ObjectData> objectDatas;
+        public List<T> objectDatas;
 
-        public void SetObjectDatas(List<ObjectData> objectDatas)
+        public void SetObjectDatas(List<T> objectDatas)
         {
             this.objectDatas = objectDatas;
         }
+    }
+
+    public class AllObjectData : AllObjectData<ObjectData>
+    {
+        
     }
 }

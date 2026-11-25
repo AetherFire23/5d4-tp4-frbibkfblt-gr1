@@ -1,10 +1,8 @@
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using NUnit.Framework;
+using Knight;
+using Knight.Pure;
 using Unity.VisualScripting;
 using UnityEngine;
-using UnityPipeline.Microsoft.CodeAnalysis.Operations;
 
 namespace SaveSystem
 {
@@ -16,6 +14,7 @@ namespace SaveSystem
         private ObjectData playerData;
         private FoodItemFactory foodItemFactory;
         private GameObject player;
+        private KnightRegionScript knightRegionSript;
 
         public static Persistance Instance = new(
             new GameLoader(),
@@ -41,6 +40,14 @@ namespace SaveSystem
         public static void RegisterPlayer(GameObject gameObject)
         {
             Instance.player = gameObject;
+            
+        }
+
+        // TODO: Crer la fonction REgister pour 
+
+        public static void RegisterKnightRegion(KnightRegionScript knightState)
+        {
+            Instance.knightRegionSript = knightState;
         }
 
         // ReSharper disable Unity.PerformanceAnalysis
@@ -48,13 +55,19 @@ namespace SaveSystem
         {
             Instance._gameSaver.SavePlayer(Instance.playerData, saveDir);
             Instance._gameSaver.SaveFoodItems(Instance.foodItems, saveDir);
-        }
 
+            Transform transform = Instance.knightRegionSript.transform;
+            KnightRegionSave knightRegionSave =
+                new KnightRegionSave(transform, "MyKnightSexyData", Instance.knightRegionSript.Knight);
+            Instance._gameSaver.SaveKnightStatus(new List<ObjectData> { knightRegionSave }, saveDir);
+        }
+ 
         public static void Load(string saveName)
         {
             List<ObjectData> foodItems = Instance._gameLoader.GetItemsFromSave(saveName);
             ObjectData newPlayerData = Instance._gameLoader.GetPlayerDataFromSave(saveName);
-
+            KnightRegionSave knightRegionSave = Instance._gameLoader.GetKnightRegionSave(saveName);
+            Instance.knightRegionSript.Knight = knightRegionSave.KnightState;
             Instance.foodItemFactory.CreateAllFromSave(foodItems);
             SetPlayerData(newPlayerData);
         }
