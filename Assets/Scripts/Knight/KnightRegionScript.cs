@@ -1,3 +1,4 @@
+using System;
 using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
@@ -13,6 +14,9 @@ public class KnightRegionScript : MonoBehaviour
 
     private BirdInventory birdInventory;
 
+    [SerializeField] private Animator knightAnimator;
+
+
     public void Awake()
     {
         Persistance.RegisterKnightRegion(this);
@@ -23,11 +27,14 @@ public class KnightRegionScript : MonoBehaviour
         Knight.TriggerOnKnightFullyCured += (state) => Debug.Log("Cured");
         Knight.TriggerOnKnightDeath += (state) => Debug.Log("Death");
 
-        var statusPanel = FindFirstObjectByType<KnightStatusPanel>();
-
+        KnightStatusPanel statusPanel = FindFirstObjectByType<KnightStatusPanel>();
         statusPanel.SubscribeToAfflictionUpdates();
-
         this.Knight.Refresh();
+    }
+    
+    public void OnEndAnimation()
+    {
+        knightAnimator.SetBool("isTakingPill", false);
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -41,6 +48,8 @@ public class KnightRegionScript : MonoBehaviour
         this.birdInventory.StopGrabbing();
 
         Knight.ReceiveReagent(foodManager.Reagent);
+        knightAnimator.SetBool("isTakingPill", true);
+        Invoke("OnEndAnimation", 2);
         fireParticles.Play();
         _source.PlayOneShot(_audioClip);
         Destroy(foodManager.gameObject);
