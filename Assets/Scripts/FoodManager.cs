@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
+using Random = System.Random;
 
 public class FoodManager : MonoBehaviour
 {
@@ -16,10 +17,15 @@ public class FoodManager : MonoBehaviour
     [SerializeField] private List<KnightAfflictionTypes> inflicts;
     [SerializeField] private List<KnightAfflictionTypes> prevents;
     [SerializeField] private List<KnightAfflictionTypes> persists;
+    [SerializeField] public List<AudioClip> clips;
 
     public Reagent Reagent;
     public float sizeMultiplier = 1.2f;
-    [NonSerialized] public string Id; 
+    [NonSerialized] public string Id;
+    private AudioSource _soundPlayer;
+    private bool audioPlayed = false;
+    private bool isAttached = false;
+    private bool isJustSpawned = true;
 
     private void Awake()
     {
@@ -31,6 +37,13 @@ public class FoodManager : MonoBehaviour
     {
         AllItemsManager.instance.RegisterItem(gameObject);
         rb = GetComponent<Rigidbody>();
+        _soundPlayer = GetComponent<AudioSource>();
+        Invoke(nameof(NotJustSpawned), 3f);
+    }
+
+    void NotJustSpawned()
+    {
+        isJustSpawned = false;
     }
 
     public void AttachItem(Transform oiseau)
@@ -42,6 +55,8 @@ public class FoodManager : MonoBehaviour
         rb.constraints = RigidbodyConstraints.FreezeAll;
         GetComponent<Collider>().enabled = false;
         transform.localScale /= sizeMultiplier;
+        audioPlayed =  false;
+        isAttached = true;
     }
 
     public void DetachItem()
@@ -51,6 +66,7 @@ public class FoodManager : MonoBehaviour
         transform.Translate(DROP_HIGHER, Space.World);
         GetComponent<Collider>().enabled = true;
         transform.localScale *= sizeMultiplier;
+        isAttached = false;
     }
 
     public ObjectData GetObjectData()
@@ -64,6 +80,19 @@ public class FoodManager : MonoBehaviour
             name,
             Id
         );
+    }
+
+    void OnCollisionEnter(Collision collision)
+    {
+        if (collision.gameObject.CompareTag("Ground") && !audioPlayed && !isAttached && !isJustSpawned)
+        {
+            int rndClip = new Random().Next(0, clips.Count);
+            _soundPlayer.clip = clips[rndClip];
+            _soundPlayer.pitch = (float)new Random().NextDouble() * 2;
+            _soundPlayer.volume = collision.relativeVelocity.magnitude / 30;
+            _soundPlayer.Play();
+            audioPlayed = true;
+        }
     }
 
     public class FoodObjectData: ObjectData
