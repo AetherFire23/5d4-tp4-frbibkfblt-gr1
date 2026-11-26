@@ -14,7 +14,7 @@ namespace Knight.Pure
      
         public event OnKnightFullyCured TriggerOnKnightFullyCured;
 
-        public int Health { get; set; } = 3;
+        public int Health { get; set; } = 1;
         public KnightAffliction Hunger { get; set; } = new(KnightAfflictionTypes.Hunger);
         public KnightAffliction Poison { get; set; } = new(KnightAfflictionTypes.Poison);
         public KnightAffliction Bleeding { get; set; } = new(KnightAfflictionTypes.Bleeding);
