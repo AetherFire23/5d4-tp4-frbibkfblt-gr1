@@ -16,7 +16,7 @@ GameObject:
   - component: {fileID: 3455648683777522456}
   - component: {fileID: 7723058830178442703}
   m_Layer: 0
-  m_Name: GreenApple
+  m_Name: greenApple
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -69,6 +69,7 @@ MeshRenderer:
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 595e799fef5428048a130a5fd5ea0d8e, type: 2}
+  - {fileID: 2100000, guid: d6a233ac3586b9b4fb16044f9c60ac97, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
