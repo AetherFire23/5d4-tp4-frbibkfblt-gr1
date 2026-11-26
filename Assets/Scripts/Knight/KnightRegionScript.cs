@@ -16,6 +16,7 @@ public class KnightRegionScript : MonoBehaviour
         sceneLoadedLister.LoadData();
         birdInventory = FindAnyObjectByType<BirdInventory>();
         Knight.TriggerOnKnightFullyCured += (state) => Debug.Log("Cured");
+        Knight.TriggerOnKnightDeath += (state) => Debug.Log("Death");
 
         var statusPanel = FindFirstObjectByType<KnightStatusPanel>();
 
