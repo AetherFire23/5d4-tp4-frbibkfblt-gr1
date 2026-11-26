@@ -6,6 +6,8 @@ public class KnightRegionScript : MonoBehaviour
 {
     public KnightState Knight { get; set; } = new KnightState();
 
+    private AudioClip _audioClip;
+
     private BirdInventory birdInventory;
 
     public void Awake()

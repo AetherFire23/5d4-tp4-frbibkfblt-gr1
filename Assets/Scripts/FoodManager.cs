@@ -7,7 +7,8 @@ using UnityEngine;
 public class FoodManager : MonoBehaviour
 {
     private Rigidbody rb;
-    private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0, 0.0f);
+    
+    private Vector3 FORWARD_GRAB = new Vector3(0,0 , -0.2f);
     private Vector3 DROP_HIGHER = new Vector3(0, 1, 0);
 
     [SerializeField] private string name;
@@ -37,6 +38,7 @@ public class FoodManager : MonoBehaviour
         transform.SetParent(oiseau);
         transform.rotation = Quaternion.identity;
         transform.localPosition = FORWARD_GRAB;
+        Debug.Log("LOCAL POSITION OF FUCKING IETM" + transform.localPosition);
         rb.constraints = RigidbodyConstraints.FreezeAll;
         GetComponent<Collider>().enabled = false;
         transform.localScale /= sizeMultiplier;
