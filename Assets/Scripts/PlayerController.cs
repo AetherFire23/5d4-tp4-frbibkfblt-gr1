@@ -139,7 +139,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     void OnCollisionEnter(Collision collision)
     {
         print(_rb.linearVelocity.magnitude);
-        if (_rb.linearVelocity.magnitude > 15f)
+        if (_rb.linearVelocity.magnitude > 15f && collision.gameObject.GetComponent<FoodManager>() is null)
         {
             print("drop");
             _birdInventory.StopGrabbing();
