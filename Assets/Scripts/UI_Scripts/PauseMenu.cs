@@ -66,7 +66,7 @@ namespace UI_Scripts
                 Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
       
             }
-            Persistance.Save(SceneLoadedListener.saveName);
+            Persistance.Save(SceneLoadedListener.saveName);;
         }
 
         public void ReturnToMenu()

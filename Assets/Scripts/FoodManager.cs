@@ -7,8 +7,8 @@ using UnityEngine;
 public class FoodManager : MonoBehaviour
 {
     private Rigidbody rb;
-    private Vector3 FORWARD_GRAB = new Vector3(0.0f, -0.1f, 0.1f);
-    private Vector3 DROP_HIGHER = new Vector3(0.0f, 1.0f, 0.0f);
+    private Vector3 FORWARD_GRAB = new Vector3(0.0f, 0, 0.0f);
+    private Vector3 DROP_HIGHER = new Vector3(0, 1, 0);
 
     [SerializeField] private string name;
     [SerializeField] private List<KnightAfflictionTypes> cures;
