@@ -8,9 +8,8 @@ public class KnightRegionScript : MonoBehaviour
     public KnightState Knight { get; set; } = new KnightState();
 
     [SerializeField] private AudioClip _audioClip;
-
-
     [SerializeField] private AudioSource _source;
+    [SerializeField] private ParticleSystem fireParticles;
 
     private BirdInventory birdInventory;
 
@@ -42,7 +41,7 @@ public class KnightRegionScript : MonoBehaviour
         this.birdInventory.StopGrabbing();
 
         Knight.ReceiveReagent(foodManager.Reagent);
-
+        fireParticles.Play();
         _source.PlayOneShot(_audioClip);
         Destroy(foodManager.gameObject);
     }

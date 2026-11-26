@@ -10741,7 +10741,7 @@ Light:
     m_Strength: 0.443
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 6.21
+    m_NearPlane: 10
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -29136,7 +29136,7 @@ Light:
     m_Strength: 0.443
     m_Bias: 0.05
     m_NormalBias: 0.4
-    m_NearPlane: 6.21
+    m_NearPlane: 10
     m_CullingMatrixOverride:
       e00: 1
       e01: 0
@@ -46924,3 +46924,4 @@ SceneRoots:
   - {fileID: 538202232}
   - {fileID: 1619206567}
   - {fileID: 1554766906}
+  - {fileID: 2033969655}
