@@ -30,6 +30,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     private BirdTrailController _birdTrailController;
 
     private Rigidbody _rb;
+    private AudioSource _windNoise;
 
     private void OnLand()
     {
@@ -113,6 +114,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnLaunch()
     {
+        _windNoise.Play();
         _isOnGround = false;
         _rb.linearDamping = baseLinearDamping;
         _rb.mass = 10;
@@ -122,11 +124,15 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnFlying()
     {
+        _windNoise.pitch = _rb.linearVelocity.magnitude / 20;
+        _windNoise.volume = _rb.linearVelocity.magnitude / 30;
         _staticFlightDirections.Add(transform.up);
     }
 
     private void OnGliding()
     {
+        _windNoise.pitch = _rb.linearVelocity.magnitude / 20;
+        _windNoise.volume = _rb.linearVelocity.magnitude / 30;
         _birdTrailController.SetTrailTime(Vector3.Dot(_rb.linearVelocity, transform.forward)/10);
     }
 
@@ -188,6 +194,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _animator.speed = 0.75f;
         _birdInventory = GetComponent<BirdInventory>();
         _birdTrailController = GetComponent<BirdTrailController>();
+        _windNoise = GetComponentInChildren<AudioSource>();
     }
 
     void Update()
@@ -234,6 +241,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         if (Input.GetKeyUp(KeyCode.LeftControl)) OnStopLanding();
         if (_wingsActive) OnFlying();
         else if (!_isOnGround) OnGliding();
+        if (!_isOnGround)
 
         // static flight directions
         if (Input.GetKey(KeyCode.W)) _staticFlightDirections.Add(transform.forward);
