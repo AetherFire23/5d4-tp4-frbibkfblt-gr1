@@ -1,12 +1,16 @@
 using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
+using UnityEngine.Audio;
 
 public class KnightRegionScript : MonoBehaviour
 {
     public KnightState Knight { get; set; } = new KnightState();
 
-    private AudioClip _audioClip;
+    [SerializeField] private AudioClip _audioClip;
+
+
+    [SerializeField] private AudioSource _source;
 
     private BirdInventory birdInventory;
 
@@ -39,6 +43,7 @@ public class KnightRegionScript : MonoBehaviour
 
         Knight.ReceiveReagent(foodManager.Reagent);
 
+        _source.PlayOneShot(_audioClip);
         Destroy(foodManager.gameObject);
     }
 }
