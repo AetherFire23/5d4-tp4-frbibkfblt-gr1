@@ -35,6 +35,11 @@ public class GameManager : MonoBehaviour
         SceneManager.sceneLoaded += OnSceneLoaded;
     }
 
+    void Update()
+    {
+        Shader.SetGlobalFloat("_UnscaledTime", Time.unscaledTime);
+    }
+
     public event Action<GameState> OnStateChanged;
 
     //cet attribut là load le gamemanager et le gere en statique peu importe on load quelle scène dans l'editor
@@ -98,7 +103,7 @@ public class GameManager : MonoBehaviour
     {
         blackScreen.blocksRaycasts = true;
         yield return FadeHelper.Fade(blackScreen, 1f, fadeTime);
-        SceneManager.LoadScene(scenePath);
+        yield return SceneManager.LoadSceneAsync(scenePath);
         yield return FadeHelper.Fade(blackScreen, 0f, fadeTime);
         blackScreen.blocksRaycasts = false;
     }
