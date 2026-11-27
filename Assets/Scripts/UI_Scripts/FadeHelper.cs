@@ -6,6 +6,7 @@ namespace UI_Scripts
     public static class FadeHelper
     {
         const float fadeDuration = 0.25f;
+        const float maxStep = 0.05f;
 
         public static IEnumerator SwitchPanels(GameObject from, GameObject to)
         {
@@ -32,7 +33,7 @@ namespace UI_Scripts
 
             while (time < duration)
             {
-                time += Time.unscaledDeltaTime;
+                time += Mathf.Min(Time.unscaledDeltaTime, maxStep);
                 group.alpha = Mathf.Lerp(start, target, time / duration);
                 yield return null;
             }

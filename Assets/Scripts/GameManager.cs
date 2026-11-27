@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    const float fadeTime = 0.75f;
+    const float fadeTime = 0.5f;
 
     CanvasGroup blackScreen;
     public static GameManager Instance { get; private set; }
@@ -104,6 +104,8 @@ public class GameManager : MonoBehaviour
         blackScreen.blocksRaycasts = true;
         yield return FadeHelper.Fade(blackScreen, 1f, fadeTime);
         yield return SceneManager.LoadSceneAsync(scenePath);
+        do yield return null;
+        while (Time.unscaledDeltaTime > 0.05f);
         yield return FadeHelper.Fade(blackScreen, 0f, fadeTime);
         blackScreen.blocksRaycasts = false;
     }
