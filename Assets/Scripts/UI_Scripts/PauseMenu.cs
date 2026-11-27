@@ -64,6 +64,7 @@ namespace UI_Scripts
             {
                 Persistance.RegisterFoodItem(foodManager.GetObjectData());
                 Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
+      
             }
             Persistance.Save(SceneLoadedListener.saveName);;
         }

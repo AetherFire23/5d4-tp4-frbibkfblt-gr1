@@ -38,10 +38,9 @@ public class KnightStatusPanel : MonoBehaviour
             hunger
         };
 
-        SubscribeToAfflictionUpdates();
     }
 
-    private void SubscribeToAfflictionUpdates()
+    public void SubscribeToAfflictionUpdates()
     {
         foreach (var knightAffliction in knightRegion.Knight.Afflictions)
         {

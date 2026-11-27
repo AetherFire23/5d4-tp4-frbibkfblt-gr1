@@ -27,6 +27,11 @@ namespace Knight.Pure
             this.KnightAfflictionType = knightAfflictionType;
         }
 
+        public KnightAffliction()
+        {
+            
+        }
+
         /**
          * Tries to cure. If the Affliction is Persistent, it is not cured but the Persistent status is set to false.
          */
@@ -70,6 +75,11 @@ namespace Knight.Pure
         {
             this.IsPersistent = true;
             TriggerOnUpdated?.Invoke(this);
+        }
+
+        public void Refresh()
+        {
+            this.TriggerOnUpdated.Invoke(this);
         }
     }
 }
