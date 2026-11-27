@@ -1,4 +1,5 @@
 using System;
+using Endgame;
 using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
@@ -24,8 +25,11 @@ public class KnightRegionScript : MonoBehaviour
         sceneLoadedLister.IsKnightSceneLoaded = true;
         sceneLoadedLister.LoadData();
         birdInventory = FindAnyObjectByType<BirdInventory>();
-        Knight.TriggerOnKnightFullyCured += (state) => Debug.Log("Cured");
-        Knight.TriggerOnKnightDeath += (state) => Debug.Log("Death");
+
+        EndGameDontDestroyOnLoad endgameScript = FindFirstObjectByType<EndGameDontDestroyOnLoad>();
+        
+        Knight.TriggerOnKnightFullyCured += endgameScript.DoWinningEndgame;
+        Knight.TriggerOnKnightDeath += endgameScript.DoLosingEndgame;
 
         KnightStatusPanel statusPanel = FindFirstObjectByType<KnightStatusPanel>();
         statusPanel.SubscribeToAfflictionUpdates();
