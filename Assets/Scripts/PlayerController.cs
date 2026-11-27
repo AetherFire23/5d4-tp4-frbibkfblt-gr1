@@ -27,15 +27,18 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     private float previousXRotation = 0f;
     private float previousYRotation = 0f;
     private BirdInventory _birdInventory;
+    private BirdTrailController _birdTrailController;
 
     private Rigidbody _rb;
+    private AudioSource _windNoise;
 
     private void OnLand()
     {
         // animations
         _animator.SetBool("gliding", false);
-        _animator.SetBool("flying", false);
+        _animator.SetBool("flying", _wingsActive);
         _animator.SetBool("landing", false);
+        _birdTrailController.StopTrail();
 
         // physics
         _isOnGround = true;
@@ -44,26 +47,34 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _rb.linearVelocity /= 10;
         _rb.mass = 25;
         _rb.useGravity = false;
-        _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ;
+        _rb.constraints = RigidbodyConstraints.FreezePositionX | RigidbodyConstraints.FreezePositionZ | RigidbodyConstraints.FreezePositionY;
     }
 
     private void OnStartFlying()
     {
+        _rb.constraints = RigidbodyConstraints.None;
         _animator.SetBool("flying", true);
         _animator.SetBool("gliding", false);
         torque /= 5;
-        _wingsActive = true; // should be in StartFlying
         if (_isOnGround)
         {
             _animator.SetInteger("hop", 1);
-            _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 1f),
+            _rb.AddForce(transform.up * (wingForce * Time.deltaTime * 0.5f),
                 ForceMode.Impulse); // small jump to kickstart flight
-            StartCoroutine(nameof(ResetHopInt), 1);
+            _rb.AddForce(transform.forward * (wingForce * Time.deltaTime * 1f),
+                ForceMode.Impulse); // small jump to kickstart flight
+            StartCoroutine(nameof(ResetHopInt), 2);
+        }
+        else
+        {
+            _wingsActive = true;
         }
     }
 
     private void OnStartGliding()
     {
+        _rb.maxLinearVelocity *= 2;
+        _birdTrailController.Trail();
     }
 
     private void OnStopFlying()
@@ -80,6 +91,8 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnStopGliding()
     {
+        _rb.maxLinearVelocity = maxForwardSpeed;
+        _birdTrailController.StopTrail();
     }
 
     private void OnStartLanding()
@@ -101,6 +114,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnLaunch()
     {
+        _windNoise.Play();
         _isOnGround = false;
         _rb.linearDamping = baseLinearDamping;
         _rb.mass = 10;
@@ -110,18 +124,21 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     private void OnFlying()
     {
+        _windNoise.pitch = _rb.linearVelocity.magnitude / 20;
+        _windNoise.volume = _rb.linearVelocity.magnitude / 30;
         _staticFlightDirections.Add(transform.up);
     }
 
     private void OnGliding()
     {
-        _rb.maxLinearVelocity *= 1.2f;
+        _windNoise.pitch = _rb.linearVelocity.magnitude / 20;
+        _windNoise.volume = _rb.linearVelocity.magnitude / 30;
+        _birdTrailController.SetTrailTime(Vector3.Dot(_rb.linearVelocity, transform.forward)/10);
     }
 
     void OnCollisionEnter(Collision collision)
     {
-        print(_rb.linearVelocity.magnitude);
-        if (_rb.linearVelocity.magnitude > 15f)
+        if (_rb.linearVelocity.magnitude > 15f && collision.gameObject.GetComponent<FoodManager>() is null)
         {
             print("drop");
             _birdInventory.StopGrabbing();
@@ -162,6 +179,7 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     void ResetHopInt()
     {
         _animator.SetInteger("hop", 0);
+        _wingsActive = true; 
     }
 
     private void Awake()
@@ -174,6 +192,8 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         _rb.maxAngularVelocity = maxForwardSpeed;
         _animator.speed = 0.75f;
         _birdInventory = GetComponent<BirdInventory>();
+        _birdTrailController = GetComponent<BirdTrailController>();
+        _windNoise = GetComponentInChildren<AudioSource>();
     }
 
     void Update()
@@ -182,7 +202,9 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
         float mouseY = Input.GetAxis("Mouse Y") * 5;
         xRotation -= Mathf.Lerp(mouseX, 0, Math.Abs(_rb.linearVelocity.x) * xCameraLock);
         yRotation -= mouseY;
-        yRotation = Mathf.Clamp(yRotation, _isOnGround ? -35 : -100f, _isOnGround ? 10 : 70f);
+
+        bool near = IsOnGroundOrNear();
+        yRotation = Mathf.Clamp(yRotation, near ? -35 : -90f, near ? 10 : 70f);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
         HandleInput();
     }
@@ -190,14 +212,34 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     private void HandleInput()
     {
         // events
-        if (Input.GetButtonDown("Jump")) OnStartFlying();
-        if (Input.GetButtonUp("Jump")) OnStopFlying();
-        if (Input.GetKeyDown(KeyCode.LeftShift)) OnStartStationaryFlight();
+        if (Input.GetButtonDown("Jump"))
+        {
+            if (!IsOnGroundOrNear())
+            {
+                OnStopGliding();
+            }
+            OnStartFlying();
+        }
+        if (Input.GetButtonUp("Jump"))
+        {
+            if (!IsOnGroundOrNear()) OnStartGliding();
+            OnStopFlying();
+        }
+        if (Input.GetKeyDown(KeyCode.LeftShift))
+        {
+            OnStopGliding();
+            OnStartStationaryFlight();
+        }
         if (Input.GetKeyUp(KeyCode.LeftShift)) OnStopStationaryFlight();
-        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround) OnStartLanding();
+        if (Input.GetKeyDown(KeyCode.LeftControl) && !_isOnGround)
+        {
+            OnStopGliding();
+            OnStartLanding();
+        }
         if (Input.GetKeyUp(KeyCode.LeftControl)) OnStopLanding();
         if (_wingsActive) OnFlying();
         else if (!_isOnGround) OnGliding();
+        if (!_isOnGround)
 
         // static flight directions
         if (Input.GetKey(KeyCode.W)) _staticFlightDirections.Add(transform.forward);
@@ -298,6 +340,18 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
     public ObjectData GetObjectData()
     {
         return new PlayerObjectData(transform, _isOnGround);
+    }
+
+    public bool IsOnGroundOrNear()
+    {
+        RaycastHit hit;
+        Physics.Raycast(transform.position, Vector3.down, out hit);
+        if (hit.distance < 0.3f)
+        {
+            return true;
+        }
+
+        return false;
     }
 
     public void BuildFromObjectData(ObjectData objectData)
