@@ -1,3 +1,4 @@
+using SaveSystem;
 using UnityEngine;
 
 namespace UI_Scripts
@@ -10,40 +11,38 @@ namespace UI_Scripts
 
         void Start()
         {
-            // continueButton.SetActive(SaveSystem.SaveExists());
+            continueButton.SetActive(Persistance.SaveExists("save1"));
             mainPanel.SetActive(true);
             settingsPanel.SetActive(false);
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
         }
 
         public void Continue()
         {
-            SceneNavigator.StartGame();
+            GameManager.Instance.StartGame();
             SceneLoadedListener.loadFromSave = true;
             SceneLoadedListener.saveName = "save1";
         }
 
         public void NewGame()
         {
-            SceneNavigator.StartGame();
+            GameManager.Instance.StartGame();
             SceneLoadedListener.loadFromSave = false;
         }
 
         public void OpenSettings()
         {
-            StartCoroutine(MenuFadeHelper.SwitchPanels(mainPanel, settingsPanel));
+            StartCoroutine(FadeHelper.SwitchPanels(mainPanel, settingsPanel));
         }
 
         public void CloseSettings()
         {
-            StartCoroutine(MenuFadeHelper.SwitchPanels(settingsPanel, mainPanel));
+            StartCoroutine(FadeHelper.SwitchPanels(settingsPanel, mainPanel));
         }
 
 
         public void Quit()
         {
-            SceneNavigator.ExitApp();
+            GameManager.Instance.ExitApp();
         }
     }
 }

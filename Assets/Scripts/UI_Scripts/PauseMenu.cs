@@ -1,6 +1,4 @@
-using System;
 using SaveSystem;
-using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -14,47 +12,54 @@ namespace UI_Scripts
         public GameObject quitPanel;
         public NoclipPlayerController player;
 
-        void Start()
-        {
-            pauseRoot.SetActive(false);
-        }
-
         void Update()
         {
             if (Keyboard.current == null || !Keyboard.current.escapeKey.wasPressedThisFrame) return;
 
-            if (!pauseRoot.activeSelf) Pause();
+            GameState state = GameManager.Instance.State;
+
+            if (state == GameState.Playing) Pause();
+            else if (state != GameState.Paused) return;
             else if (settingsPanel.activeSelf) SwitchUIPanels(settingsPanel, pausePanel);
             else if (quitPanel.activeSelf) SwitchUIPanels(quitPanel, pausePanel);
             else Resume();
         }
 
-        public void Resume()
+        void OnEnable()
         {
-            Time.timeScale = 1f;
-            player.enabled = true;
-            Cursor.lockState = CursorLockMode.Locked;
-            Cursor.visible = false;
-
-            pauseRoot.SetActive(false);
+            GameManager.Instance.OnStateChanged += OnStateChanged;
         }
 
-        public void Pause()
+        void OnDisable()
         {
-            Time.timeScale = 0f;
-            player.enabled = false;
-            Cursor.lockState = CursorLockMode.None;
-            Cursor.visible = true;
+            GameManager.Instance.OnStateChanged -= OnStateChanged;
+        }
+
+        void OnStateChanged(GameState state)
+        {
+            player.enabled = state == GameState.Playing;
+            pauseRoot.SetActive(state == GameState.Paused);
+
+            if (state != GameState.Paused) return;
 
             pausePanel.SetActive(true);
             settingsPanel.SetActive(false);
             quitPanel.SetActive(false);
-            pauseRoot.SetActive(true);
+        }
+
+        public void Resume()
+        {
+            GameManager.Instance.Resume();
+        }
+
+        public void Pause()
+        {
+            GameManager.Instance.Pause();
         }
 
         public void SwitchUIPanels(GameObject sourcePanel, GameObject targetPanel)
         {
-            StartCoroutine(MenuFadeHelper.SwitchPanels(sourcePanel, targetPanel));
+            StartCoroutine(FadeHelper.SwitchPanels(sourcePanel, targetPanel));
         }
 
         public static void SaveGame()
@@ -64,20 +69,20 @@ namespace UI_Scripts
             {
                 Persistance.RegisterFoodItem(foodManager.GetObjectData());
                 Persistance.RegisterPlayerData(FindFirstObjectByType<NoclipPlayerController>().GetObjectData());
-      
             }
-            Persistance.Save(SceneLoadedListener.saveName);;
+
+            Persistance.Save(SceneLoadedListener.saveName);
+            ;
         }
 
         public void ReturnToMenu()
         {
-            Time.timeScale = 1f;
-            SceneNavigator.GoToMenu();
+            GameManager.Instance.GoToMenu();
         }
 
         public void QuitGame()
         {
-            SceneNavigator.ExitApp();
+            GameManager.Instance.ExitApp();
         }
 
         public void OpenQuitPanel()

@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UI_Scripts
 {
-    public static class MenuFadeHelper
+    public static class FadeHelper
     {
         const float fadeDuration = 0.25f;
 
@@ -25,15 +25,15 @@ namespace UI_Scripts
             toGroup.interactable = true;
         }
 
-        public static IEnumerator Fade(CanvasGroup group, float target)
+        public static IEnumerator Fade(CanvasGroup group, float target, float duration = fadeDuration)
         {
             float start = group.alpha;
             float time = 0f;
 
-            while (time < fadeDuration)
+            while (time < duration)
             {
                 time += Time.unscaledDeltaTime;
-                group.alpha = Mathf.Lerp(start, target, time / fadeDuration);
+                group.alpha = Mathf.Lerp(start, target, time / duration);
                 yield return null;
             }
 
