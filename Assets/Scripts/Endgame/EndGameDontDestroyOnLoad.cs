@@ -2,25 +2,28 @@ using Knight.Pure;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
-public class EndGameDontDestroyOnLoad : MonoBehaviour
+namespace Endgame
 {
-    public bool IsWin { get; set; }
-
-    private void Awake()
+    public class EndGameDontDestroyOnLoad : MonoBehaviour
     {
-        DontDestroyOnLoad(this);
-    }
+        public bool IsWin { get; set; }
 
-    public void DoWinningEndgame(KnightState knightState)
-    {
-        Debug.Log("SHOULD ENTER END GAME");
-        this.IsWin = true;
-        SceneManager.LoadScene("EndgameScene", LoadSceneMode.Single);
-    }
+        private void Awake()
+        {
+            DontDestroyOnLoad(this);
+        }
 
-    public void DoLosingEndgame(KnightState knightState)
-    {
-        this.IsWin = false;
-        SceneManager.LoadScene("EndgameScene", LoadSceneMode.Single);
+        public void DoWinningEndgame(KnightState knightState)
+        {
+            Debug.Log("SHOULD ENTER END GAME");
+            this.IsWin = true;
+            SceneManager.LoadScene("EndgameScene", LoadSceneMode.Single);
+        }
+
+        public void DoLosingEndgame(KnightState knightState)
+        {
+            this.IsWin = false;
+            SceneManager.LoadScene("EndgameScene", LoadSceneMode.Single);
+        }
     }
 }

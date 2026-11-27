@@ -1,19 +1,20 @@
 using UnityEngine;
 
-
-public class CreditsRoller : MonoBehaviour
+namespace Endgame
 {
-    [SerializeField] private GameObject knight;
-    void Start()
+    public class CreditsRoller : MonoBehaviour
     {
-        var endgameScript = FindFirstObjectByType<EndGameDontDestroyOnLoad>();
-        if (!endgameScript.IsWin)
-        {
-            Destroy(knight);
-        }
-    }
+        [SerializeField] private Animator birdAnimator;
+        [SerializeField] private GameObject knight;
 
-    void Update()
-    {
+        void Start()
+        {
+            var endgameScript = FindFirstObjectByType<EndGameDontDestroyOnLoad>();
+            if (!endgameScript.IsWin)
+            {
+                Destroy(knight);
+                birdAnimator.SetBool("flying", true);
+            }
+        }
     }
 }
