@@ -38,7 +38,7 @@ namespace Knight.Pure
             foreach (KnightAffliction affliction in knight.Afflictions)
             {
                 KnightAfflictionTypes afflictionType = affliction.KnightAfflictionType;
-                
+
                 if (Cures.Contains(afflictionType))
                 {
                     affliction.Cure();

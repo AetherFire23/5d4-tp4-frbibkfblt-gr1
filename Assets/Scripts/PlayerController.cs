@@ -138,7 +138,6 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
     void OnCollisionEnter(Collision collision)
     {
-        print(_rb.linearVelocity.magnitude);
         if (_rb.linearVelocity.magnitude > 15f && collision.gameObject.GetComponent<FoodManager>() is null)
         {
             print("drop");
@@ -206,7 +205,6 @@ public class NoclipPlayerController : MonoBehaviour, IUniqueObject
 
         bool near = IsOnGroundOrNear();
         yRotation = Mathf.Clamp(yRotation, near ? -35 : -90f, near ? 10 : 70f);
-        print(yRotation);
         transform.localRotation = Quaternion.Euler(yRotation, -xRotation, 0f);
         HandleInput();
     }
