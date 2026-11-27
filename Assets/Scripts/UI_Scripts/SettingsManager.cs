@@ -8,14 +8,22 @@ namespace UI_Scripts
     {
         public Slider globalVolumeSlider;
         public Slider musicVolumeSlider;
+        public Toggle fullscreenToggle;
 
         void Start()
         {
             globalVolumeSlider.value = AudioListener.volume;
             musicVolumeSlider.value = PlayerPrefs.GetFloat("MusicVolume", 1f);
+            fullscreenToggle.isOn = Screen.fullScreen;
 
             globalVolumeSlider.onValueChanged.AddListener(SetGlobalVolume);
             musicVolumeSlider.onValueChanged.AddListener(SetMusicVolume);
+            fullscreenToggle.onValueChanged.AddListener(SetFullscreen);
+        }
+
+        private void SetFullscreen(bool value)
+        {
+            Screen.fullScreen = value;
         }
 
         private void SetMusicVolume(float value)
