@@ -1,33 +1,46 @@
 using System;
+using TMPro;
 using UnityEngine;
 
-public class PaperNoteScript : MonoBehaviour
+namespace Narration
 {
-    [SerializeField] public string Text { get; set; }
-
-    // Si tu rentres a proximite du player
-
-    public void OnCollisionEnter(Collision collision)
+    public class PaperNoteScript : MonoBehaviour
     {
-        var player = collision.gameObject.GetComponent<NoclipPlayerController>();
-        if (player is null)
+        [SerializeField] private string text;
+
+        private TextMeshProUGUI narrativePanel;
+
+        public void Awake()
         {
-            return;
+        }
+
+        public void Start()
+        {
+            this.narrativePanel = GameObject.FindGameObjectWithTag("NarrativeText").GetComponent<TextMeshProUGUI>();
+        }
+
+        public void OnTriggerEnter(Collider collision)
+        {
+            NoclipPlayerController player = collision.gameObject.GetComponent<NoclipPlayerController>();
+            if (player is null)
+            {
+                return;
+            }
+
+            this.narrativePanel.enabled = true;
+            this.narrativePanel.text = this.text;
+        }
+
+        public void OnTriggerExit(Collider collision)
+        {
+            NoclipPlayerController player = collision.gameObject.GetComponent<NoclipPlayerController>();
+            if (player is null)
+            {
+                return;
+            }
+
+            this.narrativePanel.enabled = false;
+            this.narrativePanel.text = "";
         }
     }
-
-
-    public void OnCollisionExit(Collision collision)
-    {
-        var player = collision.gameObject.GetComponent<NoclipPlayerController>();
-        if (player is null)
-        {
-            return;
-        }
-        
-        
-        
-    }
-
-    // display Active le panel 
 }
