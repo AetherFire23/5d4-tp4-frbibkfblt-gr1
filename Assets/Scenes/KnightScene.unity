@@ -230,7 +230,6 @@ RectTransform:
   - {fileID: 733936999}
   - {fileID: 55623726}
   - {fileID: 1035931802}
-  - {fileID: 2002855244}
   m_Father: {fileID: 1925407631}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_AnchorMin: {x: 0, y: 0}
@@ -1221,7 +1220,7 @@ PrefabInstance:
   serializedVersion: 2
   m_Modification:
     serializedVersion: 3
-    m_TransformParent: {fileID: 125237154}
+    m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: 87791310056843766, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_Name
@@ -1229,43 +1228,43 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalScale.x
-      value: 6
+      value: 0.06000001
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalScale.y
-      value: 30
+      value: 0.30000013
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalScale.z
-      value: 4
+      value: 0.040000014
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalPosition.x
-      value: 940.50586
+      value: 1535.79
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -319.84244
+      value: 13.32
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalPosition.z
-      value: 227.74617
+      value: 2811.54
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalRotation.w
-      value: -0.7071068
+      value: -0.58949494
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalRotation.x
-      value: 0.70710677
+      value: 0.58949494
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalRotation.y
-      value: -0.00023311377
+      value: 0.39050707
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalRotation.z
-      value: -0.00023320317
+      value: 0.39050698
       objectReference: {fileID: 0}
     - target: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
       propertyPath: m_LocalEulerAnglesHint.x
@@ -1284,11 +1283,6 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: de357a091b267194d811607784be3853, type: 3}
---- !u!4 &2002855244 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 7300468330388853090, guid: de357a091b267194d811607784be3853, type: 3}
-  m_PrefabInstance: {fileID: 1997306882}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &2079020901
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1543,6 +1537,18 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 88753120079075505, guid: eeb1f245a9d31a940b9c2bd559e2c64c, type: 3}
+      propertyPath: m_text
+      value: sdsd
+      objectReference: {fileID: 0}
+    - target: {fileID: 88753120079075505, guid: eeb1f245a9d31a940b9c2bd559e2c64c, type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 88753120079075505, guid: eeb1f245a9d31a940b9c2bd559e2c64c, type: 3}
+      propertyPath: m_fontSize
+      value: 72
+      objectReference: {fileID: 0}
     - target: {fileID: 606767533524093862, guid: eeb1f245a9d31a940b9c2bd559e2c64c, type: 3}
       propertyPath: m_Name
       value: PaperNotePanel
@@ -1599,6 +1605,7 @@ SceneRoots:
   - {fileID: 455885048}
   - {fileID: 570572176}
   - {fileID: 786064251}
+  - {fileID: 1997306882}
   - {fileID: 2135344071}
   - {fileID: 3434693590725323795}
   - {fileID: 1925407631}
