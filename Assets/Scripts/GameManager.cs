@@ -1,5 +1,8 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
+using Knight.Pure;
 using UI_Scripts;
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,10 +12,13 @@ public class GameManager : MonoBehaviour
 {
     const float fadeTime = 0.5f;
 
-    CanvasGroup blackScreen;
+    public CanvasGroup BlackScreen { get; private set; }
     public static GameManager Instance { get; private set; }
 
     public GameState State { get; private set; }
+
+    public bool Victory { get; private set; }
+    public List<KnightAfflictionTypes> RemainingAfflictions { get; private set; } = new();
 
     void Awake()
     {
@@ -20,9 +26,9 @@ public class GameManager : MonoBehaviour
         canvas.renderMode = RenderMode.ScreenSpaceOverlay;
         canvas.sortingOrder = 1000;
 
-        blackScreen = gameObject.AddComponent<CanvasGroup>();
-        blackScreen.alpha = 0f;
-        blackScreen.blocksRaycasts = false;
+        BlackScreen = gameObject.AddComponent<CanvasGroup>();
+        BlackScreen.alpha = 0f;
+        BlackScreen.blocksRaycasts = false;
 
         Image black = new GameObject("BlackScreen").AddComponent<Image>();
         black.transform.SetParent(transform, false);
@@ -57,7 +63,9 @@ public class GameManager : MonoBehaviour
     {
         if (mode == LoadSceneMode.Additive) return;
 
-        SetState(scene.name == "MainScene" ? GameState.Playing : GameState.Menu);
+        if (scene.name == "MainScene") SetState(GameState.Playing);
+        else if (scene.name == "EndgameScene") SetState(GameState.Ending);
+        else SetState(GameState.Menu);
     }
 
     //is this react? change ce que j'ai à changer, timescale, état de la souris, etc. et trigger les listeners
@@ -99,14 +107,41 @@ public class GameManager : MonoBehaviour
         Application.Quit();
     }
 
+    public void EndGame(KnightState knight)
+    {
+        Debug.Log("SHOULD ENTER END GAME");
+        Victory = knight.IsFullyCured;
+        RemainingAfflictions = knight.Afflictions
+            .Where(affliction => !affliction.IsCured)
+            .Select(affliction => affliction.KnightAfflictionType)
+            .ToList();
+
+        SetState(GameState.Ending);
+        StartCoroutine(FadeAndLoad("Scenes/EndgameScene"));
+    }
+
+    [ContextMenu("Test Defeat")]
+    void TestDefeat()
+    {
+        EndGame(new KnightState());
+    }
+
+    [ContextMenu("Test Victory")]
+    void TestVictory()
+    {
+        KnightState knight = new KnightState();
+        knight.Afflictions.ForEach(affliction => affliction.Cure());
+        EndGame(knight);
+    }
+
     IEnumerator FadeAndLoad(string scenePath)
     {
-        blackScreen.blocksRaycasts = true;
-        yield return FadeHelper.Fade(blackScreen, 1f, fadeTime);
+        BlackScreen.blocksRaycasts = true;
+        yield return FadeHelper.Fade(BlackScreen, 1f, fadeTime);
         yield return SceneManager.LoadSceneAsync(scenePath);
         do yield return null;
         while (Time.unscaledDeltaTime > 0.05f);
-        yield return FadeHelper.Fade(blackScreen, 0f, fadeTime);
-        blackScreen.blocksRaycasts = false;
+        yield return FadeHelper.Fade(BlackScreen, 0f, fadeTime);
+        BlackScreen.blocksRaycasts = false;
     }
 }

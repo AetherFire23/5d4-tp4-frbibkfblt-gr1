@@ -28,7 +28,7 @@ namespace AudioScripts
 
             musicVolume = PlayerPrefs.GetFloat("MusicVolume", 1f);
             AudioListener.volume = PlayerPrefs.GetFloat("GlobalVolume", 1f);
-            
+
             current = GetComponent<AudioSource>();
             current.volume = PlayerPrefs.GetFloat("MusicVolume", 1f);
 
@@ -57,7 +57,7 @@ namespace AudioScripts
             {
                 current.resource = music;
                 current.volume = 0f;
-                current.Play();
+                if (music != null) current.Play();
             }
 
             StopAllCoroutines();

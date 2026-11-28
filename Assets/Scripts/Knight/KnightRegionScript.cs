@@ -1,21 +1,17 @@
-using System;
-using Endgame;
 using Knight.Pure;
 using SaveSystem;
 using UnityEngine;
-using UnityEngine.Audio;
 
 public class KnightRegionScript : MonoBehaviour
 {
-    public KnightState Knight { get; set; } = new KnightState();
-
     [SerializeField] private AudioClip _audioClip;
     [SerializeField] private AudioSource _source;
     [SerializeField] private ParticleSystem fireParticles;
 
-    private BirdInventory birdInventory;
-
     [SerializeField] private Animator knightAnimator;
+
+    private BirdInventory birdInventory;
+    public KnightState Knight { get; set; } = new KnightState();
 
 
     public void Awake()
@@ -26,19 +22,12 @@ public class KnightRegionScript : MonoBehaviour
         sceneLoadedLister.LoadData();
         birdInventory = FindAnyObjectByType<BirdInventory>();
 
-        EndGameDontDestroyOnLoad endgameScript = FindFirstObjectByType<EndGameDontDestroyOnLoad>();
-        
-        Knight.TriggerOnKnightFullyCured += endgameScript.DoWinningEndgame;
-        Knight.TriggerOnKnightDeath += endgameScript.DoLosingEndgame;
+        Knight.TriggerOnKnightFullyCured += GameManager.Instance.EndGame;
+        Knight.TriggerOnKnightDeath += GameManager.Instance.EndGame;
 
         KnightStatusPanel statusPanel = FindFirstObjectByType<KnightStatusPanel>();
         statusPanel.SubscribeToAfflictionUpdates();
         this.Knight.Refresh();
-    }
-    
-    public void OnEndAnimation()
-    {
-        knightAnimator.SetBool("isTakingPill", false);
     }
 
     public void OnCollisionEnter(Collision collision)
@@ -57,5 +46,10 @@ public class KnightRegionScript : MonoBehaviour
         fireParticles.Play();
         _source.PlayOneShot(_audioClip);
         Destroy(foodManager.gameObject);
+    }
+
+    public void OnEndAnimation()
+    {
+        knightAnimator.SetBool("isTakingPill", false);
     }
 }

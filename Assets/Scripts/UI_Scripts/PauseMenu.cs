@@ -75,26 +75,6 @@ namespace UI_Scripts
             ;
         }
 
-        public void ReturnToMenu()
-        {
-            GameManager.Instance.GoToMenu();
-        }
-
-        public void QuitGame()
-        {
-            GameManager.Instance.ExitApp();
-        }
-
-        public void OpenQuitPanel()
-        {
-            SwitchUIPanels(pausePanel, quitPanel);
-        }
-
-        public void CloseQuitPanel()
-        {
-            SwitchUIPanels(quitPanel, pausePanel);
-        }
-
         public void OpenSettings()
         {
             SwitchUIPanels(pausePanel, settingsPanel);

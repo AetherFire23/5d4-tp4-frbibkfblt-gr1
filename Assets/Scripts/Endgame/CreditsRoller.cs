@@ -4,16 +4,20 @@ namespace Endgame
 {
     public class CreditsRoller : MonoBehaviour
     {
-        [SerializeField] private Animator birdAnimator;
         [SerializeField] private GameObject knight;
+        [SerializeField] private GameObject bird;
+        [SerializeField] private GameObject birdAlone;
 
         void Start()
         {
-            var endgameScript = FindFirstObjectByType<EndGameDontDestroyOnLoad>();
-            if (!endgameScript.IsWin)
+            if (GameManager.Instance.Victory)
+            {
+                Destroy(birdAlone);
+            }
+            else
             {
                 Destroy(knight);
-                birdAnimator.SetBool("flying", true);
+                Destroy(bird);
             }
         }
     }
