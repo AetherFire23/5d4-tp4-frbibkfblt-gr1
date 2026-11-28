@@ -1485,50 +1485,6 @@ Transform:
   m_CorrespondingSourceObject: {fileID: 2774220344278030320, guid: 9a0adc8af38f4d545b0ba1d75c674d93, type: 3}
   m_PrefabInstance: {fileID: 2079020901}
   m_PrefabAsset: {fileID: 0}
---- !u!1 &2135344070
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 2135344071}
-  - component: {fileID: 2135344072}
-  m_Layer: 0
-  m_Name: Endgame
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &2135344071
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2135344070}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 1537.0011, y: 14.144065, z: 2820.9202}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &2135344072
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 2135344070}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 245f6dae92a9917419fab63333daf8c9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
 --- !u!1001 &3434693590725323795
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1606,6 +1562,5 @@ SceneRoots:
   - {fileID: 570572176}
   - {fileID: 786064251}
   - {fileID: 1997306882}
-  - {fileID: 2135344071}
   - {fileID: 3434693590725323795}
   - {fileID: 1925407631}
