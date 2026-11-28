@@ -1,0 +1,131 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!1 &87791310056843766
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 7300468330388853090}
+  - component: {fileID: 7526988592378444447}
+  - component: {fileID: 6619919980603043390}
+  - component: {fileID: 4940367873686620907}
+  - component: {fileID: 4924376169285929891}
+  m_Layer: 0
+  m_Name: TempNote
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &7300468330388853090
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87791310056843766}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0.58949494, y: 0.3905071, z: 0.390507, w: -0.58949494}
+  m_LocalPosition: {x: 1538.72, y: 14.31, z: 2813.11}
+  m_LocalScale: {x: 0.06, y: 0.3, z: 0.04}
+  m_ConstrainProportionsScale: 1
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 270, y: 0, z: -67.044}
+--- !u!33 &7526988592378444447
+MeshFilter:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87791310056843766}
+  m_Mesh: {fileID: 4300000, guid: 4b8cc353a5861fa4b9510e3c90c0046e, type: 3}
+--- !u!23 &6619919980603043390
+MeshRenderer:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87791310056843766}
+  m_Enabled: 1
+  m_CastShadows: 1
+  m_ReceiveShadows: 1
+  m_DynamicOccludee: 1
+  m_StaticShadowCaster: 0
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
+  m_RayTracingMode: 2
+  m_RayTraceProcedural: 0
+  m_RayTracingAccelStructBuildFlagsOverride: 0
+  m_RayTracingAccelStructBuildFlags: 1
+  m_SmallMeshCulling: 1
+  m_RenderingLayerMask: 1
+  m_RendererPriority: 0
+  m_Materials:
+  - {fileID: 2100000, guid: 595e799fef5428048a130a5fd5ea0d8e, type: 2}
+  m_StaticBatchInfo:
+    firstSubMesh: 0
+    subMeshCount: 0
+  m_StaticBatchRoot: {fileID: 0}
+  m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
+  m_ScaleInLightmap: 1
+  m_ReceiveGI: 1
+  m_PreserveUVs: 0
+  m_IgnoreNormalsForChartDetection: 0
+  m_ImportantGI: 0
+  m_StitchLightmapSeams: 0
+  m_SelectedEditorRenderState: 3
+  m_MinimumChartSize: 4
+  m_AutoUVMaxDistance: 0.5
+  m_AutoUVMaxAngle: 89
+  m_LightmapParameters: {fileID: 0}
+  m_SortingLayerID: 0
+  m_SortingLayer: 0
+  m_SortingOrder: 0
+  m_AdditionalVertexStreams: {fileID: 0}
+--- !u!65 &4940367873686620907
+BoxCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87791310056843766}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 1
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Size: {x: 124.99, y: 27.3, z: 132.9}
+  m_Center: {x: -0.000002908555, y: 3.485533, z: 0.00000027868649}
+--- !u!114 &4924376169285929891
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 87791310056843766}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f62a5c7b9132dc54cbab7e1751f3ff7b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  text: "Monsieur le Sergent, je me suis retrouv\xE9 affect\xE9 d'\xE9tranges et
+    peu communes maladies (hormis la faim). Je n'ai pu faire autrement que de fuir.
+    Cela fait quelques heures que je rampe tel un homme tronc. J'esp\xE8re que ces
+    mots vous trouveront et que vous apporterez les renforts n\xE9cessaires \xE0
+    mon secours. Je suis si d\xE9pourvu qu'il m'arrive de prier que mon oiseau -
+    bien qu'il soit dou\xE9 au vol et que ceci le rend gracieux et magnifique - s'av\xE8re
+    \xEAtre dot\xE9 d'une intelligence d'une ampleur correspondante \xE0 la qualit\xE9
+    ses envol\xE9es, m'apportant ainsi les vivres qui r\xE9pondraient \xE0 ces maux. "
